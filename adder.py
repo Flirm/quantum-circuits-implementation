@@ -30,7 +30,9 @@ def inv_qc_sum(quantum_circuit: qiskit.QuantumCircuit, qubits: list[int]) -> qis
     return quantum_circuit
 
 #qc_adder funcion implements the adder circuit, (a,b) -> (a,a+b) using 3n bits, n = number of bits for each operand, operand b has an extra 0 bit to hold the final carry
-#first n bits are from operand a, next n bits from b, the rest are work bits c
+#in order from least significant to most significant
+#first n bits are from operand a, next n bits from b, extra bit for the last carry for b, the rest are n work bits c
+#|c>|0>|b>|a>
 def qc_adder(quantum_circuit: qiskit.QuantumCircuit, n: int) -> qiskit.QuantumCircuit:
     for i in range(n):
         quantum_circuit = qc_carry(quantum_circuit, [2*n+1+i, i, n+i, 2*n+2+i if i != n-1 else 2*n])
