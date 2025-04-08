@@ -16,3 +16,14 @@ def cx_reg(num_qubits: int) -> qiskit.QuantumCircuit:
     for qubit in reg:
         qc.cx(c[0], qubit)
     return qc
+
+#depending on the control bit state, copies n qubit register into another
+def c_copy(num_qubits: int) -> qiskit.QuantumCircuit:
+    c = qiskit.QuantumRegister(1, name="c")
+    a = qiskit.QuantumRegister(num_qubits, name="a")
+    zero = qiskit.QuantumRegister(num_qubits, name="0")
+    quantum_circuit = qiskit.QuantumCircuit(c, a, zero)
+
+    for i in range(num_qubits):
+        quantum_circuit.ccx(0, i+1, num_qubits+i+1)
+    return quantum_circuit
