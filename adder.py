@@ -49,3 +49,36 @@ def qc_adder(num_qubits: int) -> QuantumCircuit:
         quantum_circuit.compose(carry_circ.inverse(), qubits=[3*num_qubits-1-i, num_qubits-2-i, 2*num_qubits-2-i, 3*num_qubits-i], inplace=True)
         quantum_circuit.compose(sum_circ, qubits=[3*num_qubits-1-i, num_qubits-2-i, 2*num_qubits-2-i], inplace=True)
     return quantum_circuit
+
+
+def mod_adder(num_qubits: int) -> qiskit.QuantumCircuit:
+    #init work qubits and circuit
+    zero = qiskit.QuantumRegister(1, name="0")
+    a = qiskit.QuantumRegister(num_qubits, name="a")
+    b = qiskit.QuantumRegister(num_qubits + 1, name="b")
+    c = qiskit.QuantumRegister(num_qubits, name="c")
+    n = qiskit.QuantumRegister(num_qubits, name="N")
+    n0 = qiskit.QuantumRegister(num_qubits, name="N0")
+    quantum_circuit = qiskit.QuantumCircuit(a, b, c, n, n0, zero)
+    
+    #defining circs
+    adder_circ = qc_adder(num_qubits)
+    c_copy_circ = c_copy(num_qubits)
+
+    quantum_circuit.compose(adder_circ, qubits=get_qubits(quantum_circuit, [a,b,c]), inplace=True)
+    quantum_circuit.compose(adder_circ.inverse(), qubits=get_qubits(quantum_circuit, [n,b,c]), inplace=True)
+
+    quantum_circuit.cx(b[-1], zero[0])
+
+    quantum_circuit.compose(c_copy_circ, qubits=get_qubits(quantum_circuit, [zero, n, n0]), inplace=True)
+    quantum_circuit.compose(adder_circ, qubits=get_qubits(quantum_circuit, [n0,b,c]), inplace=True)
+    quantum_circuit.compose(c_copy_circ, qubits=get_qubits(quantum_circuit, [zero, n, n0]), inplace=True)
+
+    quantum_circuit.compose(adder_circ.inverse(), qubits=get_qubits(quantum_circuit, [a,b,c]), inplace=True)
+    quantum_circuit.x(b[-1])
+    quantum_circuit.cx(b[-1], zero[0])
+    quantum_circuit.x(b[-1])
+    quantum_circuit.compose(adder_circ, qubits=get_qubits(quantum_circuit, [a,b,c]), inplace=True)
+
+    
+    return quantum_circuit
