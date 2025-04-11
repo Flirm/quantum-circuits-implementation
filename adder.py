@@ -62,7 +62,7 @@ def mod_adder_VDE(num_qubits: int) -> qiskit.QuantumCircuit:
     quantum_circuit = qiskit.QuantumCircuit(a, b, c, n, n0, zero)
     
     #defining circs
-    adder_circ = qc_adder(num_qubits)
+    adder_circ = qc_adder_VDE(num_qubits)
     c_copy_circ = c_copy(num_qubits)
 
     quantum_circuit.compose(adder_circ, qubits=get_qubits(quantum_circuit, [a,b,c]), inplace=True)
