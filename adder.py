@@ -51,34 +51,39 @@ def qc_adder_VDE(num_qubits: int) -> QuantumCircuit:
     return quantum_circuit
 
 
-def mod_adder_VDE(num_qubits: int) -> qiskit.QuantumCircuit:
+def mod_adder_VDE(num_qubits: int, N:int) -> qiskit.QuantumCircuit:
     #init work qubits and circuit
     zero = qiskit.QuantumRegister(1, name="0")
     a = qiskit.QuantumRegister(num_qubits, name="a")
     b = qiskit.QuantumRegister(num_qubits + 1, name="b")
     c = qiskit.QuantumRegister(num_qubits, name="c")
     n = qiskit.QuantumRegister(num_qubits, name="N")
-    n0 = qiskit.QuantumRegister(num_qubits, name="N0")
-    quantum_circuit = qiskit.QuantumCircuit(a, b, c, n, n0, zero)
+    quantum_circuit = qiskit.QuantumCircuit(a, b, c, n, zero)
     
     #defining circs
     adder_circ = qc_adder_VDE(num_qubits)
-    c_copy_circ = c_copy(num_qubits)
+    c_set_reset_n = c_set_reset(num_qubits, N)
+    set_reset_n = set_reset(num_qubits, N)
 
-    quantum_circuit.compose(adder_circ, qubits=get_qubits(quantum_circuit, [a,b,c]), inplace=True)
-    quantum_circuit.compose(adder_circ.inverse(), qubits=get_qubits(quantum_circuit, [n,b,c]), inplace=True)
+    #setting N to register
+    quantum_circuit.compose(set_reset_n, n[:], inplace=True)
+
+    quantum_circuit.compose(adder_circ, a[:] + b[:] + c[:], inplace=True)
+    quantum_circuit.compose(adder_circ.inverse(), n[:] + b[:] + c[:], inplace=True)
 
     quantum_circuit.cx(b[-1], zero[0])
 
-    quantum_circuit.compose(c_copy_circ, qubits=get_qubits(quantum_circuit, [zero, n, n0]), inplace=True)
-    quantum_circuit.compose(adder_circ, qubits=get_qubits(quantum_circuit, [n0,b,c]), inplace=True)
-    quantum_circuit.compose(c_copy_circ, qubits=get_qubits(quantum_circuit, [zero, n, n0]), inplace=True)
+    quantum_circuit.compose(c_set_reset_n, zero[:] + n[:], inplace=True)
+    quantum_circuit.compose(adder_circ, n[:] + b[:] + c[:], inplace=True)
+    quantum_circuit.compose(c_set_reset_n, zero[:] + n[:], inplace=True)
 
-    quantum_circuit.compose(adder_circ.inverse(), qubits=get_qubits(quantum_circuit, [a,b,c]), inplace=True)
+    quantum_circuit.compose(adder_circ.inverse(), a[:] + b[:] + c[:], inplace=True)
+
     quantum_circuit.x(b[-1])
     quantum_circuit.cx(b[-1], zero[0])
     quantum_circuit.x(b[-1])
-    quantum_circuit.compose(adder_circ, qubits=get_qubits(quantum_circuit, [a,b,c]), inplace=True)
+
+    quantum_circuit.compose(adder_circ, a[:] + b[:] + c[:], inplace=True)
 
     
     return quantum_circuit

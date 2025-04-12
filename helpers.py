@@ -27,3 +27,30 @@ def c_copy(num_qubits: int) -> qiskit.QuantumCircuit:
     for i in range(num_qubits):
         quantum_circuit.ccx(0, i+1, num_qubits+i+1)
     return quantum_circuit
+
+#if control qubit is 0, zeroes out N, N is given and computed classically, else does nothing
+#if N is initialized at 0, sets 0 to N
+def c_set_reset(num_qubits: int, N: int) -> qiskit.QuantumCircuit:
+    bit_string = bin(N)[2:]
+    bit_string = bit_string.rjust(num_qubits, "0")
+    circ_n = qiskit.QuantumRegister(num_qubits, name="N")
+    c = qiskit.QuantumRegister(1, name="c")
+    quantum_circuit = qiskit.QuantumCircuit(c, circ_n)
+    quantum_circuit.x(c[0])
+    for bit in range(len(bit_string)):
+        if bit_string[bit] == "1":
+            quantum_circuit.cx(c[0], circ_n[num_qubits-bit-1])
+    quantum_circuit.x(c[0])
+            
+    return quantum_circuit
+
+def set_reset(num_qubits: int, N: int) -> qiskit.QuantumCircuit:
+    bit_string = bin(N)[2:]
+    bit_string = bit_string.rjust(num_qubits, "0")
+    circ_n = qiskit.QuantumRegister(num_qubits, name="N")
+    quantum_circuit = qiskit.QuantumCircuit(circ_n)
+    for bit in range(len(bit_string)):
+        if bit_string[bit] == "1":
+            quantum_circuit.x(circ_n[num_qubits-bit-1])
+            
+    return quantum_circuit
