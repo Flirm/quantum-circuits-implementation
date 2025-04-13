@@ -1,6 +1,6 @@
 #implementação do circuito de adição proposto por Vedral, Barenco e Ekert, utilizando 3n bits, onde n é número de bits de cada operando
 from qiskit import *
-from utils.helpers import *
+from implementations.utils.helpers import *
 
 #qc_carry function defines a 4 qubit circuit (carryIn, a, b, carryOut) sets the carry out value accondingly for the sum of a,b,carryIn
 def qc_carry() -> QuantumCircuit:
@@ -51,14 +51,14 @@ def qc_adder_VBE(num_qubits: int) -> QuantumCircuit:
     return quantum_circuit
 
 
-def mod_adder_VBE(num_qubits: int, N:int) -> qiskit.QuantumCircuit:
+def mod_adder_VBE(num_qubits: int, N:int) -> QuantumCircuit:
     #init work qubits and circuit
-    zero = qiskit.QuantumRegister(1, name="0")
-    a = qiskit.QuantumRegister(num_qubits, name="a")
-    b = qiskit.QuantumRegister(num_qubits + 1, name="b")
-    c = qiskit.QuantumRegister(num_qubits, name="c")
-    n = qiskit.QuantumRegister(num_qubits, name="N")
-    quantum_circuit = qiskit.QuantumCircuit(a, b, c, n, zero)
+    zero = QuantumRegister(1, name="0")
+    a = QuantumRegister(num_qubits, name="a")
+    b = QuantumRegister(num_qubits + 1, name="b")
+    c = QuantumRegister(num_qubits, name="c")
+    n = QuantumRegister(num_qubits, name="N")
+    quantum_circuit = QuantumCircuit(a, b, c, n, zero)
     
     #defining circs
     adder_circ = qc_adder_VBE(num_qubits)
