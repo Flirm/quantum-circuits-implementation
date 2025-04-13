@@ -31,7 +31,7 @@ def qc_sum() -> QuantumCircuit:
 #in order from least significant to most significant
 #first n bits are from operand a, next n bits from b, extra bit for the last carry for b, the rest are n work bits c
 #|c>|0>|b>|a>
-def qc_adder_VDE(num_qubits: int) -> QuantumCircuit:
+def qc_adder_VBE(num_qubits: int) -> QuantumCircuit:
     a = QuantumRegister(num_qubits, name="a")
     b = QuantumRegister(num_qubits, name="b")
     zero = QuantumRegister(1, name="0")
@@ -51,7 +51,7 @@ def qc_adder_VDE(num_qubits: int) -> QuantumCircuit:
     return quantum_circuit
 
 
-def mod_adder_VDE(num_qubits: int, N:int) -> qiskit.QuantumCircuit:
+def mod_adder_VBE(num_qubits: int, N:int) -> qiskit.QuantumCircuit:
     #init work qubits and circuit
     zero = qiskit.QuantumRegister(1, name="0")
     a = qiskit.QuantumRegister(num_qubits, name="a")
@@ -61,7 +61,7 @@ def mod_adder_VDE(num_qubits: int, N:int) -> qiskit.QuantumCircuit:
     quantum_circuit = qiskit.QuantumCircuit(a, b, c, n, zero)
     
     #defining circs
-    adder_circ = qc_adder_VDE(num_qubits)
+    adder_circ = qc_adder_VBE(num_qubits)
     c_set_reset_n = c_set_reset(num_qubits, N)
     set_reset_n = set_reset(num_qubits, N)
 
