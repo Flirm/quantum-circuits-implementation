@@ -1,5 +1,5 @@
 from qiskit import *
-from helpers import *
+from utils.helpers import *
 
 #contrlled modular multiplication proposed by Vedral, Barenco and Erkert
 #given a fixed a and N, does the following effect
