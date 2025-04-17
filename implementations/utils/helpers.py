@@ -20,12 +20,11 @@ def cx_reg(num_qubits: int) -> qiskit.QuantumCircuit:
 #depending on the control bit state, copies n qubit register into another
 def c_copy(num_qubits: int) -> qiskit.QuantumCircuit:
     c = qiskit.QuantumRegister(1, name="c")
-    a = qiskit.QuantumRegister(num_qubits, name="a")
-    zero = qiskit.QuantumRegister(num_qubits, name="0")
-    quantum_circuit = qiskit.QuantumCircuit(c, a, zero)
-
+    origin = qiskit.QuantumRegister(num_qubits, name="o")
+    target = qiskit.QuantumRegister(num_qubits, name="t")
+    quantum_circuit = qiskit.QuantumCircuit(c, origin, target)
     for i in range(num_qubits):
-        quantum_circuit.ccx(0, i+1, num_qubits+i+1)
+        quantum_circuit.ccx(c[0], origin[i], target[i])
     return quantum_circuit
 
 #if control qubit is 0, zeroes out N, N is given and computed classically, else does nothing
