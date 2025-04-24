@@ -60,11 +60,12 @@ def mod_adder_VBE(num_qubits: int, N:int) -> QuantumCircuit:
     c = QuantumRegister(num_qubits, name="c")
     n = QuantumRegister(num_qubits, name="N")
     quantum_circuit = QuantumCircuit(a, b, c, n, zero)
-    
+    quantum_circuit.name = "ModAdder-VBE"
+
     #defining circs
     adder_circ = adder_VBE(num_qubits)
     c_set_reset_n = c_set_reset(num_qubits, N)
-    set_reset_n = set_reset(num_qubits, N)
+    set_reset_n = set_reset_to(num_qubits, N)
 
     #setting N to register
     quantum_circuit.compose(set_reset_n, n[:], inplace=True)
@@ -86,5 +87,4 @@ def mod_adder_VBE(num_qubits: int, N:int) -> QuantumCircuit:
 
     quantum_circuit.compose(adder_circ, a[:] + b[:] + c[:], inplace=True)
 
-    
     return quantum_circuit

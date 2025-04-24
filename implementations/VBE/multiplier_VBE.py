@@ -10,12 +10,20 @@ def c_mult_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
     x = QuantumRegister(num_qubits, name="x")
     c = QuantumRegister(1, name="c")
     zero_x = QuantumRegister(num_qubits, name="0x")
-    zero_y = QuantumRegister(num_qubits, name="0y")
-    quantum_circuit = QuantumCircuit(c, x, zero_x, zero_y)
+    zero_y = QuantumRegister(num_qubits + 1, name="0y")
+    anc = AncillaRegister(2*num_qubits + 1, name="anc")
+    quantum_circuit = QuantumCircuit(c, x, zero_x, zero_y, anc)
+    quantum_circuit.name = "C-MultMod-VBE"
 
-    qc_adder = mod_adder_VBE(num_qubits, N)
+    for i in range(num_qubits):
+        number = ((2**i)*a)%N
+        quantum_circuit.append(cc_set_reset_to_num(num_qubits, number), c[:] + x[i:i+1] + zero_x[:])
+        quantum_circuit.append(mod_adder_VBE(num_qubits, N), zero_x[:] + zero_y[:] + anc[:])
+        #reset N register
+        quantum_circuit.append(set_reset_to(num_qubits, N), anc[num_qubits:num_qubits+2])
+        quantum_circuit.append(cc_set_reset_to_num(num_qubits, number), c[:] + x[i:i+1] + zero_x[:])
 
-    #TODO: set bits
-    
-    #TODO: reset bits
+    quantum_circuit.x(c[0])
+    quantum_circuit.append(c_copy(num_qubits), c[:] + x[:] + zero_y[:num_qubits])
+    quantum_circuit.x(c[0])
     return quantum_circuit

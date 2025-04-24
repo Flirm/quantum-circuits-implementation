@@ -23,6 +23,7 @@ def c_copy(num_qubits: int) -> qiskit.QuantumCircuit:
     origin = qiskit.QuantumRegister(num_qubits, name="o")
     target = qiskit.QuantumRegister(num_qubits, name="t")
     quantum_circuit = qiskit.QuantumCircuit(c, origin, target)
+    quantum_circuit.name = "c-copy"
     for i in range(num_qubits):
         quantum_circuit.ccx(c[0], origin[i], target[i])
     return quantum_circuit
@@ -43,13 +44,28 @@ def c_set_reset(num_qubits: int, N: int) -> qiskit.QuantumCircuit:
             
     return quantum_circuit
 
-def set_reset(num_qubits: int, N: int) -> qiskit.QuantumCircuit:
-    bit_string = bin(N)[2:]
+
+def set_reset_to(num_qubits: int, number: int) -> qiskit.QuantumCircuit:
+    num = qiskit.QuantumRegister(num_qubits, name="num")
+    quantum_curcuit = qiskit.QuantumCircuit(num)
+    quantum_curcuit.name = "set-reset"
+    bit_string = bin(number)[2:]
     bit_string = bit_string.rjust(num_qubits, "0")
-    circ_n = qiskit.QuantumRegister(num_qubits, name="N")
-    quantum_circuit = qiskit.QuantumCircuit(circ_n)
     for bit in range(len(bit_string)):
         if bit_string[bit] == "1":
-            quantum_circuit.x(circ_n[num_qubits-bit-1])
-            
+            quantum_curcuit.x(num[num_qubits-bit-1])
+    return quantum_curcuit
+
+
+def cc_set_reset_to_num(num_qubits: int, num: int) -> qiskit.QuantumCircuit:
+    c = qiskit.QuantumRegister(1, name="c")
+    xi = qiskit.QuantumRegister(1, name="xi")
+    target = qiskit.QuantumRegister(num_qubits, name="t")
+    quantum_circuit = qiskit.QuantumCircuit(c, xi, target)
+    quantum_circuit.name = "cc-set-reset"
+    bit_string = bin(num)[2:]
+    bit_string = bit_string.rjust(num_qubits, "0")
+    for bit in range(len(bit_string)):
+        if bit_string[bit] == "1":
+            quantum_circuit.ccx(c[0], xi[0], target[num_qubits-bit-1])
     return quantum_circuit
