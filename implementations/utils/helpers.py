@@ -69,3 +69,34 @@ def cc_set_reset_to_num(num_qubits: int, num: int) -> qiskit.QuantumCircuit:
         if bit_string[bit] == "1":
             quantum_circuit.ccx(c[0], xi[0], target[num_qubits-bit-1])
     return quantum_circuit
+
+#swaps two registers
+def swapper(num_qubits: int) -> qiskit.QuantumCircuit:
+    x = qiskit.QuantumRegister(num_qubits, name="x")
+    y = qiskit.QuantumRegister(num_qubits, name="y")
+    quantum_citcuit = qiskit.QuantumCircuit(x,y)
+    quantum_citcuit.name = "swapper"
+
+    for i in range(num_qubits):
+        quantum_citcuit.swap(x[i], y[i])
+    return quantum_citcuit
+
+def mod_inverse(base, exponent, mod):
+    """Compute the modular inverse of base^(2^exponent) mod mod"""
+    
+    # Compute a^(2^i) using modular exponentiation
+    value = pow(base, 2**exponent, mod)
+
+    # Compute modular inverse using Extended Euclidean Algorithm
+    def extended_gcd(a, b):
+        if b == 0:
+            return a, 1, 0
+        g, x1, y1 = extended_gcd(b, a % b)
+        return g, y1, x1 - (a // b) * y1
+    
+    g, inverse, _ = extended_gcd(value, mod)
+
+    if g != 1:
+        raise ValueError(f"No modular inverse exists for {value} mod {mod}")
+    
+    return inverse % mod
