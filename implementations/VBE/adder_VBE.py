@@ -63,7 +63,7 @@ def mod_adder_VBE(num_qubits: int, N:int) -> QuantumCircuit:
     c = QuantumRegister(num_qubits, name="c")
     n = QuantumRegister(num_qubits, name="N")
     quantum_circuit = QuantumCircuit(a, b, c, n, zero)
-    quantum_circuit.name = "ModAdder-VBE"
+    quantum_circuit.name = f"AdderMod{N}-VBE"
 
     #defining circs
     adder_circ = adder_VBE(num_qubits)

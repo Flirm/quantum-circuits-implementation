@@ -13,7 +13,7 @@ def c_mult_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
     zero_y = QuantumRegister(num_qubits + 1, name="0y")
     anc = AncillaRegister(2*num_qubits + 1, name="anc")
     quantum_circuit = QuantumCircuit(c, x, zero_x, zero_y, anc)
-    quantum_circuit.name = "C-MultMod-VBE"
+    quantum_circuit.name = f"C-MultMod{N}-VBE"
 
     for i in range(num_qubits):
         number = ((2**i)*a)%N
