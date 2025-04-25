@@ -9,6 +9,7 @@ def qc_carry() -> QuantumCircuit:
     b = QuantumRegister(1, name="b")
     cOut = QuantumRegister(1, name="cOut")
     quantum_circuit = QuantumCircuit(cIn, a, b, cOut)
+    quantum_circuit.name = "carry"
 
     quantum_circuit.ccx(1, 2, 3)
     quantum_circuit.cx(1, 2)
@@ -22,6 +23,7 @@ def qc_sum() -> QuantumCircuit:
     a = QuantumRegister(1, name="a")
     b = QuantumRegister(1, name="b")
     quantum_circuit = QuantumCircuit(c, a, b)
+    quantum_circuit.name = "sum"
     quantum_circuit.cx(1,2)
     quantum_circuit.cx(0,2)
     return quantum_circuit
@@ -37,6 +39,7 @@ def adder_VBE(num_qubits: int) -> QuantumCircuit:
     zero = QuantumRegister(1, name="0")
     c = QuantumRegister(num_qubits, name="c")
     quantum_circuit = QuantumCircuit(a, b, zero, c)
+    quantum_circuit.name = "Adder-VBE"
 
     carry_circ = qc_carry()
     sum_circ = qc_sum()
