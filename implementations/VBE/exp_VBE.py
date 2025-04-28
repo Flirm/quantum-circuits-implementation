@@ -5,6 +5,21 @@ from implementations.VBE.multiplier_VBE import c_mult_mod_VBE
 
 #defines the circuit that calculates a^x mod N
 def exp_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
+    """
+    
+    Args:
+        num_qubits (int): number of bits from operands.
+        a (int): the base of the exponentiation
+        N (int): the modulo number, it's binary representation can have at max num_qubits.
+    
+    Returns:
+        quantum_circuit(QuantumCirucit):
+
+    Reference: 
+    -
+        Quantum Networks for Elementary Arithmetic Operations.
+        V. Vedral, A. Barenco, A. Ekert
+    """
     x = QuantumRegister(2*num_qubits, name="x")
     oneReg = QuantumRegister(num_qubits, name="oneReg")
     zeroReg = QuantumRegister(num_qubits, name="zeroReg")

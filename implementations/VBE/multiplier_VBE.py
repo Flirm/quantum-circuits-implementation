@@ -7,6 +7,21 @@ from implementations.VBE.adder_VBE import mod_adder_VBE
 #|c;x,0> ->  -{ |c;x,a*x mod N> if |c>==|1>
 #            \{ |c;x,x>         if |c>==|0> 
 def c_mult_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
+    """
+
+    Args:
+        num_qubits (int): number of bits from operands.
+        a (int): the multiplicand.
+        N (int): the modulo number, it's binary representation can have at max num_qubits.
+    
+    Returns:
+        quantum_circuit (QuantumCircuit):
+    
+    Reference: 
+    -
+        Quantum Networks for Elementary Arithmetic Operations.
+        V. Vedral, A. Barenco, A. Ekert
+    """
     x = QuantumRegister(num_qubits, name="x")
     c = QuantumRegister(1, name="c")
     zero_x = QuantumRegister(num_qubits, name="0x")

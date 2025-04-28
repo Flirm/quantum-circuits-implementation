@@ -17,7 +17,6 @@ def qc_carry() -> QuantumCircuit:
     
     Returns:
         quantum_circuit(QuantumCircuit):
-    
     """
     cIn = QuantumRegister(1, name="cIn")
     a = QuantumRegister(1, name="a")
@@ -44,7 +43,6 @@ def qc_sum() -> QuantumCircuit:
     
     Returns:
         quantum_circuit(QuantumCircuit):
-    
     """
     c = QuantumRegister(1, name="c")
     a = QuantumRegister(1, name="a")
@@ -64,16 +62,15 @@ def adder_VBE(num_qubits: int) -> QuantumCircuit:
     """
     
     Args:
-        num_qubits (int): 
+        num_qubits (int): number of bits from operands.
 
     Returns:
-        quantum_circuit(QuantumCircuit):
+        quantum_circuit(QuantumCircuit): 
 
     Reference: 
     -
-        Quantum Networks for Elementary Arithmetic Operations
+        Quantum Networks for Elementary Arithmetic Operations.
         V. Vedral, A. Barenco, A. Ekert
-
     """
     a = QuantumRegister(num_qubits, name="a")
     b = QuantumRegister(num_qubits, name="b")
@@ -100,12 +97,16 @@ def mod_adder_VBE(num_qubits: int, N:int) -> QuantumCircuit:
     """
     
     Args:
-        num_qubits (int): 
-        N (int): 
+        num_qubits (int): number of bits from operands.
+        N (int): the modulo number, it's binary representation can have at max num_qubits.
 
     Returns:
         quantum_circuit(QuantumCircuit):
 
+    Reference: 
+    -
+        Quantum Networks for Elementary Arithmetic Operations.
+        V. Vedral, A. Barenco, A. Ekert
     """
     #init work qubits and circuit
     zero = QuantumRegister(1, name="0")
