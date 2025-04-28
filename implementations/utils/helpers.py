@@ -69,9 +69,9 @@ def c_copy(num_qubits: int) -> qiskit.QuantumCircuit:
               
         o1: --|--|---
               
-        t0: --⊕-|---
+        t0: --⨁-|---
                
-        t1: -----⊕---
+        t1: -----⨁---
     """
     c = qiskit.QuantumRegister(1, name="c")
     origin = qiskit.QuantumRegister(num_qubits, name="o")

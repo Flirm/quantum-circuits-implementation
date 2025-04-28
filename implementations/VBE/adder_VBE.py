@@ -4,6 +4,21 @@ from implementations.utils.helpers import *
 
 #qc_carry function defines a 4 qubit circuit (carryIn, a, b, carryOut) sets the carry out value accondingly for the sum of a,b,carryIn
 def qc_carry() -> QuantumCircuit:
+    """Implements the bitwise carry operation, given the `carry in` and two bits `a` and `b`
+    defines the `carry out`.
+
+    cIn:  ------●--
+                |
+    a:    --●-●-|--
+            | | | 
+    b:    --●-⨁-●--
+            |    |
+    cOut: --⨁---⨁--
+    
+    Returns:
+        quantum_circuit(QuantumCircuit):
+    
+    """
     cIn = QuantumRegister(1, name="cIn")
     a = QuantumRegister(1, name="a")
     b = QuantumRegister(1, name="b")
@@ -19,6 +34,18 @@ def qc_carry() -> QuantumCircuit:
 
 #qc_sum function defines a 3 qubit quantum circuit (a, b, s) and sets the value of s according to the result of the sum from a and b
 def qc_sum() -> QuantumCircuit:
+    """Implements the bitwise sum operation between two bits `c` and `a` and stores the result in `b`.
+
+    c: ----●--
+           | 
+    a: -●--|--
+        |  |
+    b: -⨁-⨁--
+    
+    Returns:
+        quantum_circuit(QuantumCircuit):
+    
+    """
     c = QuantumRegister(1, name="c")
     a = QuantumRegister(1, name="a")
     b = QuantumRegister(1, name="b")
@@ -34,6 +61,15 @@ def qc_sum() -> QuantumCircuit:
 #first n bits are from operand a, next n bits from b, extra bit for the last carry for b, the rest are n work bits c
 #|c>|0>|b>|a>
 def adder_VBE(num_qubits: int) -> QuantumCircuit:
+    """
+    
+    Args:
+        num_qubits (int): 
+
+    Returns:
+        quantum_circuit(QuantumCircuit):
+
+    """
     a = QuantumRegister(num_qubits, name="a")
     b = QuantumRegister(num_qubits, name="b")
     zero = QuantumRegister(1, name="0")
@@ -56,6 +92,16 @@ def adder_VBE(num_qubits: int) -> QuantumCircuit:
 #returns a circuit that calculates (a+b)%N, where N is given and computed classically, a and b both have n qubits
 #it is promissed that 0 <= a,b < N
 def mod_adder_VBE(num_qubits: int, N:int) -> QuantumCircuit:
+    """
+    
+    Args:
+        num_qubits (int): 
+        N (int): 
+
+    Returns:
+        quantum_circuit(QuantumCircuit):
+
+    """
     #init work qubits and circuit
     zero = QuantumRegister(1, name="0")
     a = QuantumRegister(num_qubits, name="a")
