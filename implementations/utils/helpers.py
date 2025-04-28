@@ -63,15 +63,15 @@ def c_copy(num_qubits: int) -> qiskit.QuantumCircuit:
     Exemple:
         c_copy(2)
 
-        c  --●--●---
+        c:  --●--●---
         
-        o0 --●--●---
+        o0: --●--●---
               
-        o1 --|--|---
+        o1: --|--|---
               
-        t0 --⊕-|---
+        t0: --⊕-|---
                
-        t1 -----⊕---
+        t1: -----⊕---
     """
     c = qiskit.QuantumRegister(1, name="c")
     origin = qiskit.QuantumRegister(num_qubits, name="o")
@@ -92,6 +92,8 @@ def c_set_reset(num_qubits: int, N: int) -> qiskit.QuantumCircuit:
     c = 0
     -
     |num> -> |0>
+    
+    |0> -> |num>
     
     c = 1
     -
@@ -201,13 +203,13 @@ def swapper(num_qubits: int) -> qiskit.QuantumCircuit:
     Example:
         swapper(2)
 
-        x0 --x---- y0
+        x0: --x---- y0
 
-        x1 --|-x-- y1
+        x1: --|-x-- y1
 
-        y0 --x-|-- x0
+        y0: --x-|-- x0
 
-        y1 ----x-- x1
+        y1: ----x-- x1
     """
     x = qiskit.QuantumRegister(num_qubits, name="x")
     y = qiskit.QuantumRegister(num_qubits, name="y")
