@@ -69,6 +69,11 @@ def adder_VBE(num_qubits: int) -> QuantumCircuit:
     Returns:
         quantum_circuit(QuantumCircuit):
 
+    Reference: 
+    -
+        Quantum Networks for Elementary Arithmetic Operations
+        V. Vedral, A. Barenco, A. Ekert
+
     """
     a = QuantumRegister(num_qubits, name="a")
     b = QuantumRegister(num_qubits, name="b")
