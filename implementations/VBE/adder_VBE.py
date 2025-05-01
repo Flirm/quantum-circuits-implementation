@@ -59,13 +59,60 @@ def qc_sum() -> QuantumCircuit:
 #first n bits are from operand a, next n bits from b, extra bit for the last carry for b, the rest are n work bits c
 #|c>|0>|b>|a>
 def adder_VBE(num_qubits: int) -> QuantumCircuit:
-    """
+    """Implements the circuit to sum two n-bit numbers.
+
+    It works by first calculating all carry bits, applyign n carry gates taking the i-th c[i], a[i], b[i], c[i+1] as entries.
+
+    The last carry-bit is stored in b.
+
+    After that, using the calculated carry bits we apply n sum gates tanking c[i], a[i], b[i] as entries.
+
+    Finally, we apply the inverse carry gates to reset the state of the c-bits to 0.
+
+    The plain adder circuit has the following effect:
+
+    (a,b) -> (a,a+b)
+
+    If applied in reverse:
+
+    (a,b) -> (a,b-a)            if b >= a
+
+    (a,b) -> (a,2^(n+1)-(a-b))  if a > b
+
     
+    Exemple for 2-bit sum plain adder circuit:
+
+            -----                         -----    -----
+    c0: ---|  -> |-----------------------|  <- |--|  -> |---
+           |  c  |                       |  c  |  |  s  |
+    a0: ---|  a  |-----------------------|  a  |--|  u  |---
+           |  r  |                       |  r  |  |  m  |
+    b0: ---|  r  |-----------------------|  r  |--|     |---
+           |  y  |   -----       -----   |  y  |   -----
+    c1: ---|     |--|  -> |-----|  -> |--|     |------------
+            -----   |  c  |     |  s  |   -----
+    a1:-------------|  a  |--●--|  u  |---------------------
+                    |  r  |  |  |  m  |
+    b1:-------------|  r  |--⨁-|     |---------------------
+                    |  y  |      -----
+    cO:-------------|     |---------------------------------
+                     -----
+
+    Complexity:
+    -
+    The network depth as well as number of gates can be described in O(n).
+
+    As for space, assuming n as the number of bits to encode the largest operand, we will have a total of:
+
+    - 2n bits for operands a and b
+    - 1 bit for the final carry
+    - n bits for other carries
+
     Args:
         num_qubits (int): number of bits from operands.
 
     Returns:
-        quantum_circuit(QuantumCircuit): 
+        quantum_circuit(QuantumCircuit): the circuit implementing the operation.
 
     Reference: 
     -
