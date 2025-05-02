@@ -178,7 +178,7 @@ def mod_adder_VBE(num_qubits: int, N:int) -> QuantumCircuit:
 
     (a,c) -> (a, N+c-a) if c < a
 
-    Exemple mod-adder with 2-bit operands and N = 3:
+    Exemple mod-adder with 2-bit operands and `N = 3`:
                  _____                                _____           _____
     a0    ------|0    |------------------------------|0    |---------|0    |---
                 |     |                              |     |         |     |
