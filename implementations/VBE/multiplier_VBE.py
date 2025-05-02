@@ -9,7 +9,7 @@ from implementations.VBE.adder_VBE import mod_adder_VBE
 def c_mult_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
     """
 
-    Exemple for 2-bit mult-mod circuit:
+    Exemple for 2-bit mult-mod circuit with `a = 2` and `N = 3`:
     
 
     Complexity:
