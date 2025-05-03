@@ -7,7 +7,25 @@ from implementations.VBE.adder_VBE import mod_adder_VBE
 #|c;x,0> ->  -{ |c;x,a*x mod N> if |c>==|1>
 #            \{ |c;x,x>         if |c>==|0> 
 def c_mult_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
-    """Implements the circuit operation `x*a mod N`.
+    """Implements the circuit operation `a*x mod N`.
+
+    This circuit works by decomposing the multiplication into a series of modular additions.
+
+    Because `a` and `N` are given classicaly, we can decompose `a*x` into:
+
+    - `2^0 * a * x0 + 2^1 * a * x1 + ... + 2^(n-1) * a * xn-1` ; where `xi` is the i-th bit from `x`, 0 <= i < n;
+
+    With that decomposition in hand, we initialize a register to hold the result at `|0>`,
+    then we add `2^i * a` conditioned on the state of `c` and `xi`.
+
+    Finally, to account for the possibility of `c=0`, the state would be `|c; x, 0>`, but we want `|c; x, x>`,
+    so we apply a negatively-controlled operation with `c` that copies the contents of `x` into the result register.
+
+    The controlled modular multiplication circuit has the following effect:
+
+    (c; x, 0) -> (c; x, a * x mod N)  if c = 1 
+
+    (c; x, 0) -> (c; x, x)            if c = 0
 
     Exemple for 2-bit mult-mod circuit with `a = 2` and `N = 3`:
     
