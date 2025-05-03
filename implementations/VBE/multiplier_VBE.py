@@ -21,7 +21,7 @@ def c_mult_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
     As for space, assuming `n` as the number of bits to encode `N`, we will have a total of:
 
     - `1` controll-bit.
-    - `n` bits for the operand x.
+    - `n` bits for the operand `x`.
     - `n` temporary bits for the controlled addition.
     - `n` bits for the result register.
     - `1` final carry bit.
