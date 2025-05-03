@@ -146,7 +146,7 @@ def mod_adder_VBE(num_qubits: int, N:int) -> QuantumCircuit:
     For the circuit to work properly it is given as promisse that `0 <= a,b < N`
 
     .. note::
-        This version has some differences when comparred to `[1]`, this is because the original description has some errors
+        This version has some differences when compared to `[1]`, this is because the original description has some errors
         in it, this implementation corrects them.
 
     We can divide the circuit's working in 4 parts:
