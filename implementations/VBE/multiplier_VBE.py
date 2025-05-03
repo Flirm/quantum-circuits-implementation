@@ -7,13 +7,25 @@ from implementations.VBE.adder_VBE import mod_adder_VBE
 #|c;x,0> ->  -{ |c;x,a*x mod N> if |c>==|1>
 #            \{ |c;x,x>         if |c>==|0> 
 def c_mult_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
-    """
+    """Implements the circuit operation `x*a mod N`.
 
     Exemple for 2-bit mult-mod circuit with `a = 2` and `N = 3`:
     
 
     Complexity:
     -
+    Controlled multiplication operates by applying `n` modular-adders, each one taking `O(n)`.
+
+    Because of that, the network's number of gates can be described in `O(n^2)`.
+
+    As for space, assuming `n` as the number of bits to encode `N`, we will have a total of:
+
+    - `1` controll-bit.
+    - `n` bits for the operand x.
+    - `n` temporary bits for the controlled addition.
+    - `n` bits for the result register.
+    - `1` final carry bit.
+    - `2n + 1` temporary bits needed for the modular-addition circuit.
 
     Args:
         num_qubits (int): number of bits from operands.
