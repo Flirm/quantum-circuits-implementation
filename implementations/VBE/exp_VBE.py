@@ -7,13 +7,25 @@ from implementations.VBE.multiplier_VBE import c_mult_mod_VBE
 def exp_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
     """
     
+
+    Complexity:
+    -
+
+    As for space, assuming `n` as the number of bits to encode `N`, we will have a total of:
+
+    - `2n` bits for the exponent `x`.
+    - `n`
+    - `n`
+    - `1` final carry bit.
+    - `3n + 1`
+
     Args:
         num_qubits (int): number of bits from operands.
-        a (int): the base of the exponentiation
+        a (int): the base of the exponentiation.
         N (int): the modulo number, it's binary representation can have at max num_qubits.
     
     Returns:
-        quantum_circuit(QuantumCirucit):
+        quantum_circuit(QuantumCirucit): the circuit implementing the operation.
 
     Reference: 
     -
