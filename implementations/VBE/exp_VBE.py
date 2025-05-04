@@ -5,8 +5,53 @@ from implementations.VBE.multiplier_VBE import c_mult_mod_VBE
 
 #defines the circuit that calculates a^x mod N
 def exp_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
-    """
+    """Implements the circuit operation `a^x mod N`.
+
+    Similarly to the multiplication circuit, the exponentiation works by decomposing the operation into
+    a series of smaller operations.
     
+    In this case, we decompose the exponentiation `a^x`, into a series of multiplications:
+
+    - `a^(2^0 * x0) * a^(2^1 * x1) * ... * a^(2^(2n-1) * x(2n-1))` ; where `xi` is the i-th bit from `x`, 0 <= i < 2n;
+
+    Exemple for exp-mod circuit with 4-bit `x` exponent `a = 2` and `N = 3`:
+
+    x0
+
+    x1
+
+    x2
+
+    x3
+
+    oR0
+
+    oR1
+
+    cO
+
+    zR0
+
+    zR1
+
+    anc0
+
+    anc1
+
+    anc2
+
+    anc3
+
+    anc4
+
+    anc5
+
+    anc6
+
+    
+    - Clarification:
+        - oR = result register, initialized at one.
+        - zR = zero register.
 
     Complexity:
     -
@@ -14,10 +59,10 @@ def exp_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
     As for space, assuming `n` as the number of bits to encode `N`, we will have a total of:
 
     - `2n` bits for the exponent `x`.
-    - `n`
-    - `n`
+    - `n` bits for the result register.
     - `1` final carry bit.
-    - `3n + 1`
+    - `n` temporary bits to hold partial multiplication results.
+    - `3n + 1` temporary bits needed for the modular-multiplication circuit.
 
     Args:
         num_qubits (int): number of bits from operands.
