@@ -9,10 +9,36 @@ def exp_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
 
     Similarly to the multiplication circuit, the exponentiation works by decomposing the operation into
     a series of smaller operations.
+
+    .. note::
+        We will take `n` as the number of bits to encode `N`.
+        In Shor`s algorithm, the exponent `x` can be as big as `N^2`, this means it`s encodign can take up to `2n` bits.
     
     In this case, we decompose the exponentiation `a^x`, into a series of multiplications:
 
     - `a^(2^0 * x0) * a^(2^1 * x1) * ... * a^(2^(2n-1) * x(2n-1))` ; where `xi` is the i-th bit from `x`, 0 <= i < 2n;
+
+    With that decomposition we can compute the modular exponentiation by setting the initial register to |1> and applying
+    n multiplications by `a^(2^i) mod N` depending on the value of `xi`, this operation can be described as:
+
+    If xi = 1:
+    - |a^(2^0*x0 +...2^(i-1)*x(i-1)), 0> -> |a^(2^0*x0 +...2^(i-1)*x(i-1)), a^(2^0*x0 +...2^(i-1)*x(i-1)) * a^(2^i)>
+    If xi = 0:
+    - |a^(2^0*x0 +...2^(i-1)*x(i-1)), 0> -> |a^(2^0*x0 +...2^(i-1)*x(i-1)), a^(2^0*x0 +...2^(i-1)*x(i-1))>
+
+    Then, to avoid accumulation of intermediate data, we run the controlled multiplication network in reverse with the value a^(-2^(i)) mod N.
+
+    To summarise, the network consists of 3 stages:
+
+    - Multiplication:
+        - |a^(2^0*x0 +...2^(i-1)*x(i-1)), 0> -> |a^(2^0*x0 +...2^(i-1)*x(i-1)), a^(2^0*x0 +...2^i*xi)>
+    - Swapping:
+        - |a^(2^0*x0 +...2^(i-1)*x(i-1)), a^(2^0*x0 +...2^i*xi)> -> |a^(2^0*x0 +...2^i*xi), a^(2^0*x0 +...2^(i-1)*x(i-1))>
+    - Reseting:
+        - |a^(2^0*x0 +...2^i*xi), a^(2^0*x0 +...2^(i-1)*x(i-1))> -> |a^(2^0*x0 +...2^i*xi), 0>
+
+    This is done 2n times, where at the end we'll have `a^x mod N`.
+
 
     Exemple for exp-mod circuit with 4-bit `x` exponent `a = 2` and `N = 3`:
 
@@ -55,6 +81,9 @@ def exp_mod_VBE(num_qubits: int, a: int, N: int) -> QuantumCircuit:
 
     Complexity:
     -
+    Exponentiation operates by applying `O(n)` modular-multiplications, each one taking `O(n^2)`.
+
+    Because of that, the network's number of gates can be described in `O(n^3)`.
 
     As for space, assuming `n` as the number of bits to encode `N`, we will have a total of:
 
