@@ -1,6 +1,18 @@
 from qiskit import *
 
 def qc_MAJ() -> QuantumCircuit:
+    """
+    
+    q0 -----⨁--●-----
+            |   |
+    q1 --⨁-|---●-----
+         |  |   |
+    q2 --●--●---⨁----
+
+    Returns:
+        quantum_circuit (QuantumCircuit): the circuit implementing the operation.
+
+    """
     quantum_circuit = QuantumCircuit(3)
     quantum_circuit.name = "MAJ"
     quantum_circuit.cx(2, 1)
@@ -8,10 +20,33 @@ def qc_MAJ() -> QuantumCircuit:
     quantum_circuit.ccx(0, 1, 2)
     return quantum_circuit
 
-
+#if argument is true, implements the 2cnot version, else, implements the 3cnot version
+#check reference
 def qc_UMA(two_version: bool=True) -> QuantumCircuit:
-    #if argument is true, implements the 2cnot version, else, implements the 3cnot version
-    #check reference
+    """
+    
+    - 2-CNOT verison:
+
+    q0 --●--⨁--●--
+         |  |  |
+    q1 --●--|--⨁--
+         |  |
+    q2 --⨁--●-----
+
+
+    - 3-CNOT version:
+
+    q0 ------●--●------⨁-----
+             |  |      |
+    q1 --⨁--⨁--●--⨁--|--⨁--
+                |      |  |
+    q2 ---------⨁-----●--●---
+
+
+    Returns:
+        quantum_circuit (QuantumCircuit): the circuit implementing the operation.
+
+    """
     quantum_circuit = QuantumCircuit(3)
     quantum_circuit.name = "UMA"
     if two_version:
@@ -29,6 +64,9 @@ def qc_UMA(two_version: bool=True) -> QuantumCircuit:
 
 
 def adder_CDKM(num_qubits: int, modulo_2n: bool=False) -> QuantumCircuit:
+    """
+    
+    """
     c = QuantumRegister(1, name="c")
     a = QuantumRegister(num_qubits, name="a")
     b = QuantumRegister(num_qubits, name="b")
