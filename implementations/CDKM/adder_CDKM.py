@@ -28,7 +28,22 @@ def qc_UMA(two_version: bool=True) -> QuantumCircuit:
     return quantum_circuit
 
 
-def adder_CDKM(num_qubtis: int) -> QuantumCircuit:
-    quantum_circuit = QuantumCircuit()
+def adder_CDKM(num_qubits: int) -> QuantumCircuit:
+    c = QuantumRegister(1, name="c")
+    a = QuantumRegister(num_qubits, name="a")
+    b = QuantumRegister(num_qubits, name="b")
+    z = QuantumRegister(1, name="z") 
+    quantum_circuit = QuantumCircuit(c,a,b,z, name="Adder-CDKM")
+    
+    quantum_circuit.append(qc_MAJ(), c[0:1] + b[0:1] + a[0:1])
 
+    for i in range(1, num_qubits):
+        quantum_circuit.append(qc_MAJ(), a[i-1:i] + b[i:i+1] + a[i:i+1])
+
+    quantum_circuit.cx(a[-1], z[0])
+        
+    for i in range(num_qubits-1, 0, -1):
+        quantum_circuit.append(qc_UMA(), a[i-1:i] + b[i:i+1] + a[i:i+1])
+        
+    quantum_circuit.append(qc_UMA(), c[0:1] + b[0:1] + a[0:1])
     return quantum_circuit
