@@ -32,15 +32,18 @@ def adder_CDKM(num_qubits: int, modulo_2n: bool=False) -> QuantumCircuit:
     c = QuantumRegister(1, name="c")
     a = QuantumRegister(num_qubits, name="a")
     b = QuantumRegister(num_qubits, name="b")
-    z = QuantumRegister(1, name="z") 
-    quantum_circuit = QuantumCircuit(c,a,b,z, name="Adder-CDKM")
+    if not modulo_2n:
+        z = QuantumRegister(1, name="z") 
+        quantum_circuit = QuantumCircuit(c,a,b,z, name="Adder-CDKM")
+    else:
+        quantum_circuit = QuantumCircuit(c,a,b, name="Adder-CDKM-MOD2^n")
     
     quantum_circuit.append(qc_MAJ(), c[0:1] + b[0:1] + a[0:1])
 
     for i in range(1, num_qubits):
         quantum_circuit.append(qc_MAJ(), a[i-1:i] + b[i:i+1] + a[i:i+1])
 
-    quantum_circuit.cx(a[-1], z[0])
+    if not modulo_2n: quantum_circuit.cx(a[-1], z[0])
         
     for i in range(num_qubits-1, 0, -1):
         quantum_circuit.append(qc_UMA(), a[i-1:i] + b[i:i+1] + a[i:i+1])
