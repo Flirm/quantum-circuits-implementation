@@ -28,7 +28,7 @@ def qc_UMA(two_version: bool=True) -> QuantumCircuit:
     return quantum_circuit
 
 
-def adder_CDKM(num_qubits: int) -> QuantumCircuit:
+def adder_CDKM(num_qubits: int, modulo_2n: bool=False) -> QuantumCircuit:
     c = QuantumRegister(1, name="c")
     a = QuantumRegister(num_qubits, name="a")
     b = QuantumRegister(num_qubits, name="b")
