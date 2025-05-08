@@ -11,7 +11,6 @@ def qc_MAJ() -> QuantumCircuit:
 
     Returns:
         quantum_circuit (QuantumCircuit): the circuit implementing the operation.
-
     """
     quantum_circuit = QuantumCircuit(3)
     quantum_circuit.name = "MAJ"
@@ -45,7 +44,6 @@ def qc_UMA(two_version: bool=True) -> QuantumCircuit:
 
     Returns:
         quantum_circuit (QuantumCircuit): the circuit implementing the operation.
-
     """
     quantum_circuit = QuantumCircuit(3)
     quantum_circuit.name = "UMA"
@@ -65,7 +63,22 @@ def qc_UMA(two_version: bool=True) -> QuantumCircuit:
 
 def adder_CDKM(num_qubits: int, modulo_2n: bool=False) -> QuantumCircuit:
     """
-    
+
+    Complexity:
+    -
+    For space, assuming `n` as the number of bits to encode the largest operand, we will have a total of:
+
+    - `1` bit for carryIn/Ancilla
+    - `2n` bits for operands `a` and `b`
+    - If operation is not `modulo 2^n`:
+        - `1` bit for carryOut
+
+    Args:
+        num_qubits (int): number of bits from operands.
+        modulo_2n (bool): indicates if operation is made modulo 2^n or not.
+
+    Returns:
+        quantum_circuit (QuantumCircuit): the circuit implementing the operation.
     """
     c = QuantumRegister(1, name="c")
     a = QuantumRegister(num_qubits, name="a")
