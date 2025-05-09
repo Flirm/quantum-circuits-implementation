@@ -42,6 +42,7 @@ def cx_reg(num_qubits: int) -> qiskit.QuantumCircuit:
     reg = qiskit.QuantumRegister(num_qubits, name="reg")
     c = qiskit.QuantumRegister(1, name="c")
     qc = qiskit.QuantumCircuit(reg,c)
+    qc.name = "cx-reg"
     for qubit in reg:
         qc.cx(c[0], qubit)
     return qc
@@ -118,6 +119,7 @@ def c_set_reset(num_qubits: int, N: int) -> qiskit.QuantumCircuit:
     circ_n = qiskit.QuantumRegister(num_qubits, name="N")
     c = qiskit.QuantumRegister(1, name="c")
     quantum_circuit = qiskit.QuantumCircuit(c, circ_n)
+    quantum_circuit.name = "c-set-reset"
     quantum_circuit.x(c[0])
     for bit in range(len(bit_string)):
         if bit_string[bit] == "1":
