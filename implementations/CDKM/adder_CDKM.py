@@ -1,4 +1,5 @@
 from qiskit import *
+from implementations.utils.helpers import *
 
 def qc_MAJ() -> QuantumCircuit:
     """
@@ -100,4 +101,37 @@ def adder_CDKM(num_qubits: int, modulo_2n: bool=False) -> QuantumCircuit:
         quantum_circuit.append(qc_UMA(), a[i-1:i] + b[i:i+1] + a[i:i+1])
         
     quantum_circuit.append(qc_UMA(), c[0:1] + b[0:1] + a[0:1])
+    return quantum_circuit
+
+
+def mod_adder_CDKM_VBE(num_qubits: int, N: int) -> QuantumCircuit:
+    anc = QuantumRegister(1, name="anc")
+    a = QuantumRegister(num_qubits, name="a")
+    b = QuantumRegister(num_qubits, name="b")
+    cO = QuantumRegister(1, name="cO")
+    n = QuantumRegister(num_qubits, name="N")
+    help = QuantumRegister(1, name="help")
+    quantum_circuit = QuantumCircuit(anc, a, b, cO, n, help, name=f"AdderMod{N}-CDKM-VBE")
+
+    quantum_circuit.append(set_reset_to(num_qubits, N), n[:])
+
+    quantum_circuit.append(adder_CDKM(num_qubits), anc[:] + a[:] + b[:] + cO[:])
+    quantum_circuit.append(adder_CDKM(num_qubits).inverse(), anc[:] + n[:] + b[:] + cO[:])
+
+    quantum_circuit.cx(cO[0], help[0])
+
+    quantum_circuit.append(c_set_reset(num_qubits, N), help[:] + n[:])
+    quantum_circuit.append(adder_CDKM(num_qubits), anc[:] + n[:] + b[:] + cO[:])
+    quantum_circuit.append(c_set_reset(num_qubits, N), help[:] + n[:])
+
+    quantum_circuit.append(adder_CDKM(num_qubits).inverse(), anc[:] + a[:] + b[:] + cO[:])
+
+    quantum_circuit.x(cO[0])
+    quantum_circuit.cx(cO[0], help[0])
+    quantum_circuit.x(cO[0])
+
+    quantum_circuit.append(adder_CDKM(num_qubits), anc[:] + a[:] + b[:] + cO[:])
+
+    quantum_circuit.append(set_reset_to(num_qubits, N), n[:])
+
     return quantum_circuit
