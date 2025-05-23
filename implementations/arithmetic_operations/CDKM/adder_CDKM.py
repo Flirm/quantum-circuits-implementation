@@ -80,6 +80,11 @@ def adder_CDKM(num_qubits: int, modulo_2n: bool=False) -> QuantumCircuit:
 
     Returns:
         quantum_circuit (QuantumCircuit): the circuit implementing the operation.
+
+    Reference:
+    -
+        A new quantum ripple-carry addition circuit. 
+        Steven A. Cuccaro, Thomas G. Draper, Samuel A. Kutin, David Petrie Moulton
     """
     c = QuantumRegister(1, name="c")
     a = QuantumRegister(num_qubits, name="a")
