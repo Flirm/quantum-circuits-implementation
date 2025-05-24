@@ -3,6 +3,7 @@ from math import log2, ceil
 from qiskit.circuit.library import XGate, UnitaryGate
 from qiskit.circuit import Gate
 
+
 def encode_table(l: list[int], size: int) -> list[str]:
     """
     l: list to be encoded
