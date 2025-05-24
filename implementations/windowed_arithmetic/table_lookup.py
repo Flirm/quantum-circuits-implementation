@@ -40,3 +40,30 @@ def xor_data_gates(l: list[str], size: int) -> list[Gate]:
     for i in range(len(circuits)):
         circuits[i].name = f"L{i}"
     return circuits
+
+
+def compute_lookup_table(W: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
+    """
+    a = input; input size in bits is log2(len(l)), ex: if len(l) = 8, then input size is 3, log2(8)=3, 2^3 = 8
+    w = output size in bits
+    l = table to be computed
+    c = controll qubit
+    """
+    index_size = ceil(log2(len(l)))
+    a = QuantumRegister(index_size, name="a")
+    w = QuantumRegister(W, name="W")
+    c = QuantumRegister(1, name="c")
+    quantum_circuit = QuantumCircuit(a, c, w)
+
+    c_strings = generate_control_strings(len(l))
+    e_table = encode_table(l, W)
+    xor_circs = xor_data_gates(e_table, W)
+    
+    match optimization:
+        case 0:
+            for i in range(len(l)):
+                get_data_circ = xor_circs[i].control(index_size + 1, ctrl_state="1" + c_strings[i][::-1])
+                quantum_circuit.append(get_data_circ, a[:] + c[:] + w[:])
+
+    
+    return quantum_circuit
