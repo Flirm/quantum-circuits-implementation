@@ -5,9 +5,18 @@ from qiskit.circuit import Gate
 
 
 def encode_table(l: list[int], size: int) -> list[str]:
-    """
-    l: list to be encoded
-    size: how many bits elements should have in it's encoding
+    """Function encodes integers given in a list into their binary representation.
+
+    Exemple:
+    -
+    [4,2,3,1,6,5,8,7] -> ['0100', '0010', '0011', '0001', '0110', '0101', '1000', '0111']
+
+    Args:
+        l (list[int]): list of integers to be encoded.
+        size (int): how many bits elements should have in it's encoding.
+
+    Returns:
+        encoded_l(list[str]): a list of strings containing the binary encoding with size-bits of the numbers in l. 
     """
     encoded_l = []
     for num in l:
