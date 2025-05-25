@@ -45,8 +45,26 @@ def generate_control_strings(size: int) -> list[str]:
 
 
 def xor_data_gates(l: list[str], size: int) -> list[Gate]:
-    """
-    create a list of gates wich cnots the data in list to qubits
+    """Generates quantum gates from a list of binary strings,
+    the ih-gate action is to set initialized qubits to the i-th string in the given list.
+
+    Exemple:
+    -  
+    `xor_data_gates(['0100'], 4)`
+
+    `|0> -> |4>`
+     ____
+    |0   |     q0 -----
+    |1 L |  =  q1 -----
+    |2 0 |     q2 --X--
+    |3___|     q3 -----
+
+    Args:
+        l (list[str]): a list of binary strings.
+        size (int): the number of bits the gate should affect.
+    
+    Returns:
+        circuits(list[Gate]): a list of quantum gates, the ih-gate sets `|0>` to the bit-string from the ih-element in `l`.
     """
     circuits = []
     for bit_string in l:
