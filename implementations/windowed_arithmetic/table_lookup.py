@@ -81,7 +81,7 @@ def x_data_gates(l: list[str], size: int) -> list[Gate]:
 
 def compute_lookup_table(W: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
-    the corresponding value in the list `l` into the `w-bits` output register.
+    the corresponding a-th value of the list `l` into the `w-bits` output register.
 
     Exemple:
     -
