@@ -5,11 +5,11 @@ from qiskit.circuit import Gate
 
 
 def encode_table(l: list[int], size: int) -> list[str]:
-    """Function encodes integers given in a list into their binary representation.
+    """Function encodes integers in a given list into their binary representation with `size`-bits.
 
     Exemple:
     -
-    [4,2,3,1,6,5,8,7] -> ['0100', '0010', '0011', '0001', '0110', '0101', '1000', '0111']
+    `[4,2,3,1,6,5,8,7] -> ['0100', '0010', '0011', '0001', '0110', '0101', '1000', '0111']`
 
     Args:
         l (list[int]): list of integers to be encoded.
@@ -25,8 +25,17 @@ def encode_table(l: list[int], size: int) -> list[str]:
 
 
 def generate_control_strings(size: int) -> list[str]:
-    """
-    size: number of bits to encode list size
+    """Function generates a list of binary strings from `0` to `size`.
+
+    Exemple:
+    -
+    `size = 6 -> ['000', '001', '010', '011', '100', '101']`
+
+    Args:
+        size (int): number elements to be generated (list size).
+
+    Returns:
+        c_strings(list[str]): a list of binary strings from `0-size`.
     """
     c_strings = []
     string_size = ceil(log2(size))
