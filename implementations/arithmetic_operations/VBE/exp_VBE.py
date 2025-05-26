@@ -1,6 +1,6 @@
 from qiskit import *
 from implementations.utils.helpers import *
-from implementations.VBE.multiplier_VBE import c_mult_mod_VBE
+from implementations.arithmetic_operations.VBE.multiplier_VBE import c_mult_mod_VBE
 
 
 #defines the circuit that calculates a^x mod N

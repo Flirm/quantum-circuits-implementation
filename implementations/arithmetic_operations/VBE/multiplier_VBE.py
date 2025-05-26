@@ -1,6 +1,6 @@
 from qiskit import *
 from implementations.utils.helpers import *
-from implementations.VBE.adder_VBE import mod_adder_VBE
+from implementations.arithmetic_operations.VBE.adder_VBE import mod_adder_VBE
 
 #contrlled modular multiplication proposed by Vedral, Barenco and Erkert
 #given a fixed a and N, does the following effect
