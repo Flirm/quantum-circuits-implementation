@@ -137,12 +137,12 @@ def compute_lookup_table(W: int, l: list[int], optimization: int = 0) -> Quantum
 
     c_strings = generate_control_strings(len(l))
     e_table = encode_table(l, W)
-    xor_circs = x_data_gates(e_table, W)
+    x_circs = x_data_gates(e_table, W)
     
     match optimization:
         case 0:
             for i in range(len(l)):
-                get_data_circ = xor_circs[i].control(index_size + 1, ctrl_state="1" + c_strings[i][::-1])
+                get_data_circ = x_circs[i].control(index_size + 1, ctrl_state="1" + c_strings[i][::-1])
                 quantum_circuit.append(get_data_circ, a[:] + c[:] + w[:])
 
     
