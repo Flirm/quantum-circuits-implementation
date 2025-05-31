@@ -80,8 +80,20 @@ def x_data_gates(l: list[str], size: int) -> list[Gate]:
 
 
 def calculate_exp_table(W: int, a: int, N: int) -> list[int]:
-    """
+    """Given a base `a`, a modulo `N` and a window size `W` calculates the table
+    `tbl[d] = a^d mod N, d = 1,3,5,...,2^W-1`
+
+    Exemple:
+    -
+    `calculate_exp_table(2,3,31)` -> `[0, 3, 0, 27]`
+
+    Args:
+        W (int): window size.
+        a (int): base of the exponentiation.
+        N (int): modulo of the exponentiation.
     
+    Returns:
+        exp_table(list[int]): a list with the results from the exponentiation.
     """
     exp_table = [0]*((2**W))
     for d in range(1,(2**W),2):
