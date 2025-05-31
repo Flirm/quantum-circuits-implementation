@@ -79,6 +79,16 @@ def x_data_gates(l: list[str], size: int) -> list[Gate]:
     return circuits
 
 
+def calculate_exp_table(W: int, a: int, N: int) -> list[int]:
+    """
+    
+    """
+    exp_table = [0]*((2**W))
+    for d in range(1,(2**W),2):
+        exp_table[d] = ((a**d) % N)
+    return exp_table
+
+
 def compute_lookup_table(W: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
     the corresponding a-th value of the list `l` into the `w-bits` output register.
