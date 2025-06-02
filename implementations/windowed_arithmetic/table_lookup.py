@@ -101,7 +101,7 @@ def calculate_exp_table(W: int, a: int, N: int) -> list[int]:
     return exp_table
 
 
-def compute_lookup_table(W: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
+def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
     the corresponding a-th value of the list `l` into the `w-bits` output register.
 
@@ -134,12 +134,12 @@ def compute_lookup_table(W: int, l: list[int], optimization: int = 0) -> Quantum
     -
     Number of bits per register:
 
-    - `w`, output register, takes `W` bits.
+    - `o`, output register, takes `outBits` bits.
     - `a`, input register, takes `⌈log2|l|⌉` bits.
     - `c`, control register, takes `1` bit.
 
     Args:
-        W (int): output size in bits.
+        outBits (int): output size in bits.
         l (list[int]): list to be computed.
         optimization (int): the level of optimization the circuit should have, `default = 0`.
     
@@ -151,21 +151,22 @@ def compute_lookup_table(W: int, l: list[int], optimization: int = 0) -> Quantum
     [1]Encoding Electronic Spectra in Quantum Circuits with Linear T Complexity.
     Ryan Babbush, Craig Gidney, Dominic W. Berry, Nathan Wiebe, Jarrod McClean, Alexandru Paler, Austin Fowler, and Hartmut Neven
     """
-    index_size = ceil(log2(len(l)))
-    a = QuantumRegister(index_size, name="a")
-    w = QuantumRegister(W, name="W")
+
+    window_size = ceil(log2(len(l)))
+    a = QuantumRegister(window_size, name="a")
+    o = QuantumRegister(outBits, name="out")
     c = QuantumRegister(1, name="c")
-    quantum_circuit = QuantumCircuit(a, c, w)
+    quantum_circuit = QuantumCircuit(a, c, o)
 
     c_strings = generate_control_strings(len(l))
-    e_table = encode_table(l, W)
-    x_circs = x_data_gates(e_table, W)
+    e_table = encode_table(l, outBits)
+    x_circs = x_data_gates(e_table, outBits)
     
     match optimization:
         case 0:
             for i in range(len(l)):
-                get_data_circ = x_circs[i].control(index_size + 1, ctrl_state="1" + c_strings[i][::-1])
-                quantum_circuit.append(get_data_circ, a[:] + c[:] + w[:])
+                get_data_circ = x_circs[i].control(window_size + 1, ctrl_state="1" + c_strings[i][::-1])
+                quantum_circuit.append(get_data_circ, a[:] + c[:] + o[:])
 
     
     return quantum_circuit
