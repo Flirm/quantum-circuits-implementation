@@ -79,31 +79,33 @@ def x_data_gates(l: list[str], size: int) -> list[Gate]:
     return circuits
 
 
-def calculate_exp_table(W: int, a: int, N: int) -> list[int]:
+def calculate_exp_table(W: int, a: int, N: int, only_odds: bool = False) -> list[int]:
     """Given a base `a`, a modulo `N` and a window size `W` calculates the table
-    `tbl[d] = a^d mod N, d = 1,3,5,...,2^W-1`
+    `tbl[d] = a^d mod N, d = 1,2,3,...,2^W-1`
 
     Exemple:
     -
-    `calculate_exp_table(2,3,31)` -> `[0, 3, 0, 27]`
+    `calculate_exp_table(2,3,31)` -> `[1, 3, 9, 27]`
 
     Args:
         W (int): window size.
         a (int): base of the exponentiation.
         N (int): modulo of the exponentiation.
+        only_odds (bool): define if calculates the operation for all values of `d` or only when `d` is odd.
     
     Returns:
         exp_table(list[int]): a list with the results from the exponentiation.
     """
-    exp_table = [0]*((2**W))
-    for d in range(1,(2**W),2):
+    exp_table = [0]*((1<<W))
+    (step, start) = (2,1) if only_odds else (1,0)
+    for d in range(start,(1<<W),step):
         exp_table[d] = ((a**d) % N)
     return exp_table
 
 
 def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
-    the corresponding a-th value of the list `l` into the `w-bits` output register.
+    the corresponding a-th value of the list `l` into the `outBits` output register.
 
     Exemple:
     -
@@ -135,7 +137,7 @@ def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> Q
     Number of bits per register:
 
     - `o`, output register, takes `outBits` bits.
-    - `a`, input register, takes `⌈log2|l|⌉` bits.
+    - `w`, input register (window), takes `⌈log2|l|⌉` bits.
     - `c`, control register, takes `1` bit.
 
     Args:
@@ -153,10 +155,10 @@ def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> Q
     """
 
     window_size = ceil(log2(len(l)))
-    a = QuantumRegister(window_size, name="a")
+    w = QuantumRegister(window_size, name="w")
     o = QuantumRegister(outBits, name="out")
     c = QuantumRegister(1, name="c")
-    quantum_circuit = QuantumCircuit(a, c, o)
+    quantum_circuit = QuantumCircuit(w, c, o)
 
     c_strings = generate_control_strings(len(l))
     e_table = encode_table(l, outBits)
@@ -165,8 +167,8 @@ def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> Q
     match optimization:
         case 0:
             for i in range(len(l)):
-                get_data_circ = x_circs[i].control(window_size + 1, ctrl_state="1" + c_strings[i][::-1])
-                quantum_circuit.append(get_data_circ, a[:] + c[:] + o[:])
+                get_data_circ = x_circs[i].control(window_size + 1, ctrl_state="1" + c_strings[i])
+                quantum_circuit.append(get_data_circ, w[:] + c[:] + o[:])
 
     
     return quantum_circuit
