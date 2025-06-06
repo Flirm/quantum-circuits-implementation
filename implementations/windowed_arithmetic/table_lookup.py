@@ -159,6 +159,7 @@ def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> Q
     o = QuantumRegister(outBits, name="out")
     c = QuantumRegister(1, name="c")
     quantum_circuit = QuantumCircuit(w, c, o)
+    quantum_circuit.name = "QROM"
 
     c_strings = generate_control_strings(len(l))
     e_table = encode_table(l, outBits)
