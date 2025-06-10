@@ -103,6 +103,26 @@ def calculate_exp_table(W: int, a: int, N: int, only_odds: bool = False) -> list
     return exp_table
 
 
+def get_output_string(bin_list: list[str], size: int) -> list[str]:
+    """
+    separates the outputs by bit
+    ex:
+    `[0100, 1000, 0010, 0000, 0101]` -> `[[01000], [10001], [00100], [00001]]`
+    -> `[[[0],[1],[0],[0],[0]], [[[1],[0],[0],[0],[1]], [[[0],[0],[1],[0],[0]], [[[0],[0],[0],[0],[1]]]`
+    """
+    new_list = ['']*size
+    for i in range(size):
+        for j in range(len(bin_list)):
+            new_list[i] += bin_list[j][i]
+    LL=[]
+    for x in new_list:
+        L=[]
+        for y in x:
+            L.append([int(y)])
+        LL.append(L)
+    return LL
+
+
 def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
     the corresponding a-th value of the list `l` into the `outBits` output register.
