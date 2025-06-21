@@ -103,6 +103,21 @@ def calculate_exp_table(W: int, a: int, N: int, only_odds: bool = False) -> list
     return exp_table
 
 def calculate_mult_table(W: int, a: int, N: int) -> list[int]:
+    """Given a base `a`, a modulo `N` and a window size `W` calculates the table
+    `tbl[d] = a*d mod N, d = 1,2,3,...,2^W-1`
+
+    Exemple:
+    -
+    `calculate_exp_table(2,3,31)` -> `[0, 2, 4, 6, 8, 10, 12, 14]`
+
+    Args:
+        W (int): window size.
+        a (int): base of the multiplication.
+        N (int): modulo of the operation.
+    
+    Returns:
+        mult_table(list[int]): a list with the results from the modular multiplication.
+    """
     mult_table = []
     for d in range(1<<W):
         mult_table.append((a*d) % N)
