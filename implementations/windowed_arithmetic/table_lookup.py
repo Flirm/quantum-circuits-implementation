@@ -86,6 +86,7 @@ def calculate_exp_table(W: int, a: int, N: int, only_odds: bool = False) -> list
     Exemple:
     -
     `calculate_exp_table(2,3,31)` -> `[1, 3, 9, 27]`
+    `calculate_exp_table(2,3,31,True)` -> `[0, 3, 0, 27]`
 
     Args:
         W (int): window size.
