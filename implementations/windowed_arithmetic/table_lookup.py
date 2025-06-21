@@ -102,6 +102,12 @@ def calculate_exp_table(W: int, a: int, N: int, only_odds: bool = False) -> list
         exp_table[d] = ((a**d) % N)
     return exp_table
 
+def calculate_mult_table(W: int, a: int, N: int) -> list[int]:
+    mult_table = []
+    for d in range(1<<W):
+        mult_table.append((a*d) % N)
+    return mult_table
+
 
 def get_output_string(bin_list: list[str], size: int) -> list[str]:
     """
@@ -114,6 +120,7 @@ def get_output_string(bin_list: list[str], size: int) -> list[str]:
     for i in range(size):
         for j in range(len(bin_list)):
             new_list[i] += bin_list[j][i]
+    new_list = new_list[::-1]
     LL=[]
     for x in new_list:
         L=[]
