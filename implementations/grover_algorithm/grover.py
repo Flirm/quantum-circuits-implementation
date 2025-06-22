@@ -20,6 +20,22 @@ def get_sat() -> tuple[int, list[list[int]]]:
 
 
 def sat_clause_control_string(l: list[int]) -> str:
+    """Given a interger list, returns the equivalent control string,
+    if the number is negated returns a positive control,
+    else returns the negative control.
+
+    Exemple:
+    -
+    `[2,-4,-5] -> "110"`
+
+    Args:
+        l (list[int]): one SAT clause, in the format [i, j, w, ...] where i,j,w,... are the equivalent literals,
+                       if the number is negative, it represents the negated literal. 
+
+    Returns:
+        c_string(str): the control string generated from the given clause to be used on the `OR` operation.
+    
+    """
     c_string = ""
     for i in l:
         if i > 0:
