@@ -2,6 +2,7 @@ from qiskit import *
 from math import log2, ceil
 from qiskit.circuit.library import XGate, UnitaryGate
 from qiskit.circuit import Gate
+from otimizador import executa_sintese
 
 
 def encode_table(l: list[int], size: int) -> list[str]:
@@ -213,6 +214,12 @@ def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> Q
             for i in range(len(l)):
                 get_data_circ = x_circs[i].control(window_size + 1, ctrl_state="1" + c_strings[i])
                 quantum_circuit.append(get_data_circ, w[:] + c[:] + o[:])
+        case 1:
+            output_str = get_output_string(e_table,outBits)
+            circs = []
+            for i in range(len(output_str)):
+                circs.append(executa_sintese(n=outBits, tabela_saida=output_str[i]))
+                
 
     
     return quantum_circuit
