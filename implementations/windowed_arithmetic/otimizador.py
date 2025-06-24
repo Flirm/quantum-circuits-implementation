@@ -1534,4 +1534,8 @@ def main():
         [0],
     ]
     circ = executa_sintese(n=3, tabela_saida=saida)
+    print(circ.__repr__())
     return
+
+if __name__ == "__main__":
+    main()
