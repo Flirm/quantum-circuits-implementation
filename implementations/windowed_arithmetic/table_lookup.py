@@ -3,6 +3,7 @@ from math import log2, ceil
 from qiskit.circuit.library import XGate, UnitaryGate, MCXGate
 from qiskit.circuit import Gate
 from otimizador import executa_sintese
+import re
 
 
 def encode_table(l: list[int], size: int) -> list[str]:
@@ -231,6 +232,143 @@ def tfc_to_qiskit(tfc_str):
     return qc
 
 
+def tfc_str_to_qiskit(tfc_str, num_ctrl_qubits):
+    """
+    Converts a quantum circuit described in TFC format string to a Qiskit QuantumCircuit.
+
+    Args:
+        tfc_str (str): String containing the TFC circuit description
+        num_ctrl_qubits (int): Number of control qubits in the circuit
+
+    Returns:
+        QuantumCircuit: The equivalent Qiskit circuit
+    """
+    qubit_map = {}
+    next_qubit_index = 0
+    num_classical_bits = 0
+    circuit_lines = []
+
+    lines = [line.strip() for line in tfc_str.split('\n') if line.strip()]
+
+    in_begin_section = False
+    for line in lines:
+        if not line or line.startswith('#'):
+            continue
+
+        if line.startswith('.v'):
+            virtual_qubits = [q.strip() for q in line.split(' ')[1].split(',')]
+            for q_name in virtual_qubits:
+                if q_name.startswith('b') or q_name.startswith('s'):
+                    qubit_map[q_name] = next_qubit_index
+                    next_qubit_index += 1
+        elif line.startswith('.o'):
+            output_qubit_names = [q.strip() for q in line.split(' ')[1].split(',')]
+            num_classical_bits = len(output_qubit_names)
+        elif line == 'BEGIN':
+            in_begin_section = True
+        elif line == 'END':
+            in_begin_section = False
+        elif in_begin_section:
+            circuit_lines.append(line)
+
+    actual_num_qubits = max(qubit_map.values()) + 1 if qubit_map else 0
+
+    qr = QuantumRegister(actual_num_qubits, 'q')
+    qc = QuantumCircuit(qr)
+
+    print(f"Total Quantum Qubits: {actual_num_qubits}")
+    print(f"Total Classical Bits (for outputs): {num_classical_bits}")
+    print("Qubit Mapping:", qubit_map)
+
+    for gate_line in circuit_lines:
+        match = re.match(r'(T\d+)\s(.*)', gate_line)
+        if not match:
+            print(f"Warning: Could not parse line: {gate_line}")
+            continue
+
+        gate_type = match.group(1)
+        qubit_names_str = match.group(2)
+        qubit_names = [q.strip() for q in qubit_names_str.split(',')]
+
+        controls = []
+        target_idx = None
+        control_states_str = ""
+
+        # Process target qubit
+        target_name_raw = qubit_names[-1]
+        if target_name_raw.endswith("'"):
+            print(f"Warning: Target qubit '{target_name_raw}' is negated. Treating as non-negated.")
+            target_name = target_name_raw[:-1]
+        else:
+            target_name = target_name_raw
+
+        target_idx = qubit_map.get(target_name)
+        if target_idx is None:
+            print(f"Error: Target qubit '{target_name}' not found in qubit map for line: {gate_line}")
+            continue
+
+        # Process control qubits
+        for q_name_raw in qubit_names[:-1]:
+            is_negated = False
+            q_name = q_name_raw
+            if q_name_raw.endswith("'"):
+                is_negated = True
+                q_name = q_name_raw[:-1]
+
+            control_idx = qubit_map.get(q_name)
+            if control_idx is None:
+                print(f"Error: Control qubit '{q_name}' not found in qubit map for line: {gate_line}")
+                continue
+
+            controls.append(qr[num_ctrl_qubits-control_idx-1])
+            control_states_str += '0' if is_negated else '1'
+
+        # Apply gates
+        if gate_type == 'T1':
+            qc.x(qr[target_idx])
+
+        elif gate_type == 'T2':
+            if len(controls) != 1:
+                print(f"Warning: T2 gate expects 1 control, found {len(controls)} for {gate_line}. Skipping.")
+                continue
+            
+            if control_states_str[0] == '0':
+                qc.x(controls[0])
+            qc.cx(controls[0], qr[target_idx])
+            if control_states_str[0] == '0':
+                qc.x(controls[0])
+
+        elif gate_type == 'T3':
+            if len(controls) != 2:
+                print(f"Warning: T3 gate expects 2 controls, found {len(controls)} for {gate_line}. Skipping.")
+                continue
+            
+            temp_controls = list(controls)
+            for i, control_state in enumerate(control_states_str):
+                if control_state == '0':
+                    qc.x(temp_controls[i])
+
+            qc.ccx(temp_controls[0], temp_controls[1], qr[target_idx])
+
+            for i, control_state in enumerate(control_states_str):
+                if control_state == '0':
+                    qc.x(temp_controls[i])
+
+        elif gate_type.startswith('T'):
+            num_involved_qubits = int(gate_type[1:])
+            if len(controls) + 1 != num_involved_qubits:
+                print(f"Warning: Gate {gate_type} in line '{gate_line}' implies {num_involved_qubits} qubits, but found {len(controls)+1}.")
+            
+            mcx_gate = MCXGate(len(controls), ctrl_state=control_states_str[::-1])
+            all_involved_qubits = controls + [qr[target_idx]]
+            qc.append(mcx_gate, all_involved_qubits)
+
+        else:
+            print(f"Warning: Unknown gate type {gate_type} in line: {gate_line}")
+
+    return qc
+
+
 def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
     the corresponding a-th value of the list `l` into the `outBits` output register.
@@ -300,15 +438,8 @@ def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> Q
                 quantum_circuit.append(get_data_circ, w[:] + c[:] + o[:])
         case 1:
             output_str = get_output_string(e_table,outBits)
-            tfc_circ_str = executa_sintese(n=window_size, tabela_saida=output_str[0]).__repr__()
-            circ = tfc_to_qiskit(tfc_circ_str)
-            for i in range(1, len(output_str)):
+            for i in range(len(output_str)):
                 tfc_circ_str = executa_sintese(n=window_size, tabela_saida=output_str[i]).__repr__()
-                circ.compose(tfc_to_qiskit(tfc_circ_str))
-            quantum_circuit = circ
+                quantum_circuit.append(tfc_str_to_qiskit(tfc_circ_str, window_size), w[:] + o[i:i+1])
 
-                
-                
-
-    
     return quantum_circuit
