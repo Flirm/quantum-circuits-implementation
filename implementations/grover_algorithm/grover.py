@@ -100,7 +100,7 @@ def grover(bit_array: list[int], sat_clauses: list[list[int]]) -> QuantumCircuit
     return quantum_circuit
 
 
-def grover_search(bit_arr: list[int], fnc: list[list[int]]) -> QuantumCircuit:
+def grover_search(bit_arr: list[int], fnc: list[list[int]], m: int = 1) -> QuantumCircuit:
     """
     bit array [num_literals, num_anc, num_result]
     """
@@ -111,7 +111,7 @@ def grover_search(bit_arr: list[int], fnc: list[list[int]]) -> QuantumCircuit:
     result = ClassicalRegister(bit_arr[0], "result")
     quantum_circuit = QuantumCircuit(x,anc,r,result)
     quantum_circuit.h(x)
-    num_reps = int((pi/4)*((2**bit_arr[0])**(1/2)))
+    num_reps = int((pi/4)*(((2**bit_arr[0])/m)**(1/2)))
     for i in range(num_reps):
         quantum_circuit.append(G, x[:] + anc[:] + r[:])
     quantum_circuit.measure(x,result)
