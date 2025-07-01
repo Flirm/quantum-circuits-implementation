@@ -332,7 +332,7 @@ def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> Q
 
     Reference:
     -
-    [1]Encoding Electronic Spectra in Quantum Circuits with Linear T Complexity.
+    [1]Encoding Electronic Spectra in Quantum Circuits with Linear T Complexity. |
     Ryan Babbush, Craig Gidney, Dominic W. Berry, Nathan Wiebe, Jarrod McClean, Alexandru Paler, Austin Fowler, and Hartmut Neven
     """
 

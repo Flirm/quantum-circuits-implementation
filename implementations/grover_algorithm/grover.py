@@ -9,6 +9,9 @@ def get_sat() -> tuple[int, list[list[int]]]:
     To enter the clause type all the literals present in the clause separated by comma,
     if the literal is negated enter a `-` sign in front of it.
     ex: 1,3,-4 is the clause (X1 V X3 V ¬X4)
+
+    Returns:
+        x,cnf(tuple[int,list[list[int]]]): a tuple containing the number of literals and the `SAT C.N.F.`
     """
     x = int(input("Enter the ammount of literals: "))
     cnf = []
@@ -85,9 +88,21 @@ def inversion_by_the_mean(num_bits: int) -> QuantumCircuit:
 
 
 def grover(bit_array: list[int], sat_clauses: list[list[int]]) -> QuantumCircuit:
-    """Grover Operator
-    bit array is the array that contains the how many bits will be used in witch register
-    [5,3,1] means 5 input bits, 3 anc bits and 1 result bit.
+    """Implements one iteration of the Grover Operator.
+
+    Args:
+        bit_array (list[int]): bit array is the array that contains how many bits will 
+                               be used in witch register [5,3,1] means 5 input bits, 3 anc bits and 1 result bit.
+        sat_clauses (list[list[int]]): each line from the matrix represents one clause, each clause contains the numbers
+                                       representing the corresponding literals, if the number is negative it indicates 
+                                       that the literal is negated in the clause.
+
+    Returns:
+        quantum_circuit(QuantumCircuit): returns the implementation of the grover operator.
+
+    Reference:
+        [1] Construcao De Algoritmos Reversiveis e Quanticos | Luis Antonio Brasil Kowada
+        [2] A fast quantum mechanical algorithm for database search | Lov K. Grover | https://arxiv.org/pdf/quant-ph/9605043
     """
     x = QuantumRegister(bit_array[0], "x")
     anc = QuantumRegister(bit_array[1], "anc")
@@ -118,7 +133,13 @@ def grover_search(bit_arr: list[int], fnc: list[list[int]], m: int = 1) -> Quant
     return quantum_circuit
 
 
-def grover_counting(bit_arr: list[int], fnc: list[list[int]]) -> QuantumCircuit:
+def grover_phase_estimation(bit_arr: list[int], fnc: list[list[int]]) -> QuantumCircuit:
+    """
+    Reference:
+    -
+        [1] Quantum counting, and a relevant sign. | Natalie Chung and Rafael I. Nepomechie | https://arxiv.org/pdf/2310.07428
+        [2] Quantum Counting Algorithm | QuantuC | https://www.youtube.com/watch?v=8MS8-Xwz45k
+    """
     G = grover(bit_arr, fnc)
     x = QuantumRegister(bit_arr[0], "x")
     anc = QuantumRegister(bit_arr[1], "anc")
