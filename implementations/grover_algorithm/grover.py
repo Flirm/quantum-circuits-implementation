@@ -138,7 +138,6 @@ def grover_phase_estimation(bit_arr: list[int], fnc: list[list[int]]) -> Quantum
     Reference:
     -
         [1] Quantum counting, and a relevant sign. | Natalie Chung and Rafael I. Nepomechie | https://arxiv.org/pdf/2310.07428
-        [2] Quantum Counting Algorithm | QuantuC | https://www.youtube.com/watch?v=8MS8-Xwz45k
     """
     G = grover(bit_arr, fnc)
     x = QuantumRegister(bit_arr[0], "x")
@@ -169,6 +168,7 @@ def get_search_solution(GS: QuantumCircuit) -> str:
 
 def get_counting_solution(bits: list[int], GC: QuantumCircuit) -> float:
     """bits [n_literals, n_precision_bits]
+    [1] Quantum Counting Algorithm | QuantuC | https://www.youtube.com/watch?v=8MS8-Xwz45k
     """
     simulator_aer = AerSimulator()
     qc_aer = transpile(GC, backend=simulator_aer)
