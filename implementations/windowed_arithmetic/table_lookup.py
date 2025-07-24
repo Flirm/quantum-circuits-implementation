@@ -4,6 +4,7 @@ from qiskit.circuit.library import XGate, UnitaryGate, MCXGate
 from qiskit.circuit import Gate
 from otimizador import executa_sintese
 import re
+from hypercube import cria_circuito_sintese_nova
 
 
 def encode_table(l: list[int], size: int) -> list[str]:
@@ -285,7 +286,7 @@ def tfc_str_to_qiskit(tfc_str, num_ctrl_qubits):
     return qc
 
 
-def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
+def compute_lookup_table(window_size: int, outBits: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
     the corresponding a-th value of the list `l` into the `outBits` output register.
 
@@ -332,30 +333,35 @@ def compute_lookup_table(outBits: int, l: list[int], optimization: int = 0) -> Q
 
     Reference:
     -
-    [1]Encoding Electronic Spectra in Quantum Circuits with Linear T Complexity. |
+    [1]Encoding Electronic Spectra in Quantum Circuits with Linear T Complexity.
     Ryan Babbush, Craig Gidney, Dominic W. Berry, Nathan Wiebe, Jarrod McClean, Alexandru Paler, Austin Fowler, and Hartmut Neven
     """
 
-    window_size = ceil(log2(len(l)))
     w = QuantumRegister(window_size, name="w")
     o = QuantumRegister(outBits, name="out")
-    c = QuantumRegister(1, name="c")
-    quantum_circuit = QuantumCircuit(w, c, o)
+    quantum_circuit = QuantumCircuit(w, o)
     quantum_circuit.name = "QROM"
 
-    c_strings = generate_control_strings(len(l))
     e_table = encode_table(l, outBits)
-    x_circs = x_data_gates(e_table, outBits)
     
     match optimization:
         case 0:
+            x_circs = x_data_gates(e_table, outBits)
+            c_strings = generate_control_strings(len(l))
             for i in range(len(l)):
-                get_data_circ = x_circs[i].control(window_size + 1, ctrl_state="1" + c_strings[i])
-                quantum_circuit.append(get_data_circ, w[:] + c[:] + o[:])
+                get_data_circ = x_circs[i].control(window_size, c_strings[i])
+                quantum_circuit.append(get_data_circ, w[:] + o[:])
         case 1:
             output_str = get_output_string(e_table,outBits)
             for i in range(len(output_str)):
                 tfc_circ_str = executa_sintese(n=window_size, tabela_saida=output_str[i]).__repr__()
                 quantum_circuit.append(tfc_str_to_qiskit(tfc_circ_str, window_size), w[:] + o[i:i+1])
+        case 2:
+            #l should be the permutation list, the least significant outBits from each number in l should be the original values
+            #window size can be greater than 2*outBits because of the nature of the permutation, so to ensure correct results
+            #we only initialize the first 2*outBits with Haddamard gates, and only measure the first outBits
+            perm_circ = cria_circuito_sintese_nova(window_size, l)
+            quantum_circuit.append(perm_circ, w[:])
+            print(max(l))
 
     return quantum_circuit
