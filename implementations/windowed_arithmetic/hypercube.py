@@ -1,9 +1,4 @@
-"""
-Cídigo original feito por: Guilherme da Hora (https://github.com/Kourggos)
-"""
-
 from qiskit import QuantumCircuit, QuantumRegister
-from table_lookup import calculate_exp_table, calculate_mult_table
 
 def porta(k, x, y, pi, limite):
     """
@@ -97,15 +92,15 @@ def hipercubo(k, vet_s):
 
     return listaPortas[::-1]
 
-def cria_portas_sintese_nova(n_bits, A, N):
-    saida = calculate_exp_table(n_bits, A, N)
+def cria_portas_sintese_nova(n_bits, table):
+    saida = table
 
     portas = hipercubo(n_bits, saida)
 
     return portas
 
-def cria_circuito_sintese_nova(n_bits, A, N, controlado=False):
-    portas = cria_portas_sintese_nova(n_bits, A, N)
+def cria_circuito_sintese_nova(n_bits, table, controlado=False):
+    portas = cria_portas_sintese_nova(n_bits, table)
 
     q_reg = QuantumRegister(n_bits, "qreg")
 
