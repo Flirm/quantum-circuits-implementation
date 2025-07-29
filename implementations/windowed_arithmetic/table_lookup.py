@@ -286,6 +286,34 @@ def tfc_str_to_qiskit(tfc_str, num_ctrl_qubits):
     return qc
 
 
+def transform_to_permutation(orig_list: list[int], n_bits: int) -> list[int]:
+    """ get unique permutation of elements from original list
+    retulting list is a permutation where the last n_bits from each element represent the original value
+    and the first bits are used to ensure uniqueness of the permutation.
+    The first bits can also be represented as the i-th appearance of that number.
+    """
+    new_list = []
+    appearance = {key: 0 for key in orig_list}
+    for i in orig_list:
+        appearance[i] += 1
+        if appearance[i] <= 1:
+            new_list.append(i)
+        else:
+            new_number = i + (1 << n_bits) * (appearance[i] - 1)
+            new_list.append(new_number)
+    return new_list
+
+
+def complete_permutation(orig_list: list[int], n_bits: int) -> list[int]:
+    """Completes the permutation by adding missing elements to the original list.
+    The resulting list will contain all integers from 0 to 2^n_bits -
+    """
+    for i in range(1<<n_bits):
+        if i not in orig_list:
+            orig_list.append(i)
+    return orig_list
+
+
 def compute_lookup_table(window_size: int, outBits: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
     the corresponding a-th value of the list `l` into the `outBits` output register.
@@ -321,7 +349,6 @@ def compute_lookup_table(window_size: int, outBits: int, l: list[int], optimizat
 
     - `o`, output register, takes `outBits` bits.
     - `w`, input register (window), takes `⌈log2|l|⌉` bits.
-    - `c`, control register, takes `1` bit.
 
     Args:
         outBits (int): output size in bits.
@@ -362,6 +389,5 @@ def compute_lookup_table(window_size: int, outBits: int, l: list[int], optimizat
             #we only initialize the first 2*outBits with Haddamard gates, and only measure the first outBits
             perm_circ = cria_circuito_sintese_nova(window_size, l)
             quantum_circuit.append(perm_circ, w[:])
-            print(max(l))
 
     return quantum_circuit
