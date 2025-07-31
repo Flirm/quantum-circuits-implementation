@@ -2,9 +2,9 @@ from qiskit import *
 from math import log2, ceil
 from qiskit.circuit.library import XGate, UnitaryGate, MCXGate
 from qiskit.circuit import Gate
-from otimizador import executa_sintese
+from implementations.windowed_arithmetic.synthesis.otimizador import executa_sintese
 import re
-from hypercube import cria_circuito_sintese_nova
+from implementations.windowed_arithmetic.synthesis.hypercube import cria_circuito_sintese_nova
 
 
 def encode_table(l: list[int], size: int) -> list[str]:
