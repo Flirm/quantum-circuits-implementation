@@ -33,7 +33,7 @@ def win_add_mod(N: int, w: int, n: int, k: int = 1) -> QuantumCircuit:
         #target += table[win]
     for i in range(0, n, w):
         table = [j * k * 2**i % N for j in range(2**w)]
-        qrom = compute_lookup_table(w, n, table)
+        qrom = compute_lookup_table(w, n, table, optimization=1)
         quantum_circuit.append(qrom, reg_y[i:i + w] + reg_t[:])
         quantum_circuit.append(mod_adder_CDKM_VBE(n, N), reg_anc[0:1] + reg_t[:] + reg_o[:] + reg_anc[1:])
         quantum_circuit.append(qrom.inverse(), reg_y[i:i + w] + reg_t[:])
@@ -45,4 +45,4 @@ def win_add_mod(N: int, w: int, n: int, k: int = 1) -> QuantumCircuit:
 
     return quantum_circuit
 
-win_add_mod(35,2,4).draw("mpl")
+
