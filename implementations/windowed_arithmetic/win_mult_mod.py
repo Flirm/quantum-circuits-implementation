@@ -18,5 +18,7 @@ def times_equal_windowed(target: Quint, k: int, window: int):
         times_equal_windowed(w, k, window=1)
 """
 
-#like shown in figure 6, the modular multiplication can be reduced into modular product additions, we simply use last result as the next window input multiplying it by k
-#or the multiplicative inverse of k
+#like shown in figure 6, the modular multiplication can be reduced into modular product additions, so, to do x *= k mod N
+#we can simply do use the input a and the constant k in the plus equals product, the output will be a*k mod N
+#then we use that result as the input and target a with k = (-k)^-1, so that the register will be 0
+#we then swap the two registers, having the following result: |a> -> |a*k mod N> we use another n bit register to store partial results.
