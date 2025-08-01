@@ -376,7 +376,7 @@ def compute_lookup_table(window_size: int, outBits: int, l: list[int], optimizat
             x_circs = x_data_gates(e_table, outBits)
             c_strings = generate_control_strings(len(l))
             for i in range(len(l)):
-                get_data_circ = x_circs[i].control(window_size, c_strings[i])
+                get_data_circ = x_circs[i].control(num_ctrl_qubits=window_size, ctrl_state=c_strings[i])
                 quantum_circuit.append(get_data_circ, w[:] + o[:])
         case 1:
             output_str = get_output_string(e_table,outBits)
