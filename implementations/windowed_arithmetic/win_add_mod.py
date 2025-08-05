@@ -3,7 +3,7 @@ from arithmetic_operations.CDKM.adder_CDKM import mod_adder_CDKM_VBE
 from math import log2
 from table_lookup import compute_lookup_table
 
-def win_add_mod(N: int, w: int, n: int, k: int = 1) -> QuantumCircuit:
+def win_add_mod(N: int, w: int, n: int, k: int) -> QuantumCircuit:
     """
     Args:
         N (int): the modulus.

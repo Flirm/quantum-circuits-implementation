@@ -1,4 +1,5 @@
 from qiskit import *
+from win_add_mod import win_add_mod
 
 """
 def times_equal_windowed(target: Quint, k: int, window: int):
@@ -22,3 +23,8 @@ def times_equal_windowed(target: Quint, k: int, window: int):
 #we can simply do use the input a and the constant k in the plus equals product, the output will be a*k mod N
 #then we use that result as the input and target a with k = (-k)^-1, so that the register will be 0
 #we then swap the two registers, having the following result: |a> -> |a*k mod N> we use another n bit register to store partial results.
+
+
+def win_mult_mod(N: int, w: int, n: int,k: int) -> QuantumCircuit:
+    
+    return
