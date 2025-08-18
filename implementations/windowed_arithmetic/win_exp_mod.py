@@ -69,8 +69,5 @@ def win_exp_mod(N: int, k: int, n: int, ne: int, we: int = 0, wm: int = 0) -> Qu
             quantum_circuit.append(qrom.inverse(), reg_e[i:i + we] + reg_o[j:j+wm] + reg_t[:])
 
         quantum_circuit.swap(reg_a, reg_o)
-    
-    if len(list(range(0,ne,we))) % 2 != 0:
-        quantum_circuit.swap(reg_a, reg_o)
 
     return quantum_circuit
