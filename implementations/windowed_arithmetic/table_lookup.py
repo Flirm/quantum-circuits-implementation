@@ -391,3 +391,7 @@ def compute_lookup_table(window_size: int, outBits: int, l: list[int], optimizat
             quantum_circuit.append(perm_circ, w[:])
 
     return quantum_circuit
+
+
+def uncompute_lookup(in_size: int, table_size: int) -> QuantumCircuit:
+    return
