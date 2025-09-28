@@ -314,6 +314,38 @@ def complete_permutation(orig_list: list[int], n_bits: int) -> list[int]:
     return orig_list
 
 
+def build_index_circ(i: int, n: int, reg: QuantumRegister, aux: QuantumRegister, target: QuantumRegister, x_circs: list[QuantumCircuit], qc: QuantumCircuit):
+    if i == n:
+        return qc
+    if i == 0:
+        qc.ccx(reg[i], aux[i], aux[i+1], ctrl_state="10")
+    else:
+        qc.ccx(reg[i], aux[i], aux[i+1], "10")
+    
+    build_index_circ(i+1, n, reg, aux, target, x_circs, qc)
+    
+    if i == n-1:
+        qc.append(x_circs[0].control(1), aux[i+1:i+2] + target[:])
+        x_circs.pop(0)
+        qc.barrier()
+
+    qc.cx(aux[i], aux[i+1])
+
+    if i == n-1:
+        qc.append(x_circs[0].control(1), aux[i+1:i+2] + target[:])
+        x_circs.pop(0)
+        qc.barrier()
+
+    build_index_circ(i+1, n, reg, aux, target, x_circs, qc)
+
+    if i == 0:
+        qc.ccx(reg[i], aux[i], aux[i+1])
+    else:
+        qc.ccx(reg[i], aux[i], aux[i+1])
+
+    return qc
+
+
 def compute_lookup_table(window_size: int, outBits: int, l: list[int], optimization: int = 0) -> QuantumCircuit:
     """Computes the lookup-table(QROM)`[1]`, the circuit takes an input `a` and has an effect of XOR'ing 
     the corresponding a-th value of the list `l` into the `outBits` output register.
@@ -366,24 +398,32 @@ def compute_lookup_table(window_size: int, outBits: int, l: list[int], optimizat
 
     w = QuantumRegister(window_size, name="w")
     o = QuantumRegister(outBits, name="out")
-    quantum_circuit = QuantumCircuit(w, o)
-    quantum_circuit.name = "QROM"
-
+    
     e_table = encode_table(l, outBits)
     
     match optimization:
         case 0:
             x_circs = x_data_gates(e_table, outBits)
-            c_strings = generate_control_strings(len(l))
-            for i in range(len(l)):
-                get_data_circ = x_circs[i].control(num_ctrl_qubits=window_size, ctrl_state=c_strings[i])
-                quantum_circuit.append(get_data_circ, w[:] + o[:])
+            anc = QuantumRegister(window_size+1, "anc")
+            quantum_circuit = QuantumCircuit(w, anc, o)
+            quantum_circuit.name = "QROM"
+            quantum_circuit.x(anc[0])
+
+            build_index_circ(0, window_size, w, anc, o, x_circs, quantum_circuit)
+
         case 1:
+            quantum_circuit = QuantumCircuit(w, o)
+            quantum_circuit.name = "QROM"
+
             output_str = get_output_string(e_table,outBits)
+
             for i in range(len(output_str)):
                 tfc_circ_str = executa_sintese(n=window_size, tabela_saida=output_str[i]).__repr__()
                 quantum_circuit.append(tfc_str_to_qiskit(tfc_circ_str, window_size), w[:] + o[i:i+1])
+
         case 2:
+            quantum_circuit = QuantumCircuit(w, o)
+            quantum_circuit.name = "QROM"
             #l should be the permutation list, the least significant outBits from each number in l should be the original values
             #window size can be greater than 2*outBits because of the nature of the permutation, so to ensure correct results
             #we only initialize the first 2*outBits with Haddamard gates, and only measure the first outBits
