@@ -1,8 +1,7 @@
 from qiskit import *
 from table_lookup import compute_lookup_table
-from math import log2, ceil
+from math import log2, ceil, pi
 from implementations.arithmetic_operations.CDKM.adder_CDKM import mod_adder_CDKM_VBE
-from math import pi
 
 
 def modinv(a: int, n: int) -> int:
