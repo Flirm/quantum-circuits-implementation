@@ -42,11 +42,10 @@ def win_exp_mod(N: int, k: int, n: int, ne: int, we: int = 0, wm: int = 0) -> Qu
     reg_a = QuantumRegister(n, name="input a")
     reg_t = QuantumRegister(n, name="target")
     reg_o = QuantumRegister(n, name="output")
-    reg_temp = QuantumRegister(n, name="temp")
     reg_help = QuantumRegister(1, name="help")  # used as cOut for adder
     reg_anc = QuantumRegister(n+2, name="anc")
 
-    quantum_circuit = QuantumCircuit(reg_e, reg_a, reg_t, reg_o, reg_temp, reg_help, reg_anc, name="win_add_mod_expVer")
+    quantum_circuit = QuantumCircuit(reg_e, reg_a, reg_t, reg_o, reg_help, reg_anc, name="win_add_mod_expVer")
 
     for i in range(0, ne, we):
         # Exponent - indexed factors and inverse factors .
@@ -97,12 +96,11 @@ def win_exp_mod_reuse_e(N: int, k: int, n: int, ne: int, we: int = 0, wm: int = 
     reg_a = QuantumRegister(n, name="input a")
     reg_t = QuantumRegister(n, name="target")
     reg_o = QuantumRegister(n, name="output")
-    reg_temp = QuantumRegister(n, name="temp")
     reg_help = QuantumRegister(1, name="help")  # used as cOut for adder
     reg_anc = QuantumRegister(n+2, name="anc")
     reg_c = ClassicalRegister(4, name="auxE")
 
-    quantum_circuit = QuantumCircuit(reg_e, reg_a, reg_t, reg_o, reg_temp, reg_help, reg_anc, reg_c, name="win_add_mod_expVer")
+    quantum_circuit = QuantumCircuit(reg_e, reg_a, reg_t, reg_o, reg_help, reg_anc, reg_c, name="win_add_mod_expVer")
 
     quantum_circuit.x(reg_a[0])
 
@@ -161,12 +159,11 @@ def win_exp_mod_semi_class(N: int, k: int, n: int, ne: int, we: int = 0, wm: int
     reg_a = QuantumRegister(n, name="input a")
     reg_t = QuantumRegister(n, name="target")
     reg_o = QuantumRegister(n, name="output")
-    reg_temp = QuantumRegister(n, name="temp")
     reg_help = QuantumRegister(1, name="help")  # used as cOut for adder
     reg_anc = QuantumRegister(n+2, name="anc")
     reg_c = ClassicalRegister(2*n, name="auxE")
 
-    quantum_circuit = QuantumCircuit(reg_e, reg_a, reg_t, reg_o, reg_temp, reg_help, reg_anc, reg_c, name="win_add_mod_expVer")
+    quantum_circuit = QuantumCircuit(reg_e, reg_a, reg_t, reg_o, reg_help, reg_anc, reg_c, name="win_add_mod_expVer")
 
     quantum_circuit.x(reg_a[0])
 
