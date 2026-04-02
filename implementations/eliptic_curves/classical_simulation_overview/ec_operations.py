@@ -34,7 +34,7 @@ class Point:
         return x % p
 
     def negative(self):
-        return Point(self.x, -self.y % self.curve.p)
+        return Point(self.x, (-self.y) % self.curve.p, self.curve)
     
     def point_add(self, q: "Point"):
         assert self.curve == q.curve, "Points on different curves"
@@ -50,27 +50,23 @@ class Point:
         if self.x == q.x:
             lamb = (3*(self.x**2) + self.curve.a) * self.inv_mod(2*q.y)
         else:
-            lamb = (q.y - self.y) * self.inv_mod(q.x - self.x,)
+            lamb = ((q.y - self.y) * self.inv_mod(q.x - self.x)) % p
         
-        x = lamb**2 - self.x - q.x
-        y = lamb*(self.x - x) - self.y
+        p = self.curve.p
+        x = (lamb**2 - self.x - q.x) % p
+        y = (lamb*(self.x - x) - self.y) % p
 
         return Point(x, y, self.curve)
 
     def point_multiply(self, k):
-        assert k>=1, "K < 1"
+        result = Point(0, 0, self.curve, True)
+        current = self
 
-        final = Point(0, 0, self.curve, True)
-        intermediate = Point(self.x, self.y, self.curve, self.is_inf)
+        while k > 0:
+            if k & 1:
+                result = result.point_add(current)
+            current = current.point_add(current)
+            k >>= 1
 
-        if k&1:
-            final = self.point_add(final)
-        k = k>>1
-
-        while k:
-            intermediate = intermediate.point_add(intermediate)
-
-        final = final.point_add(intermediate)
-
-        return final
+        return result
             
