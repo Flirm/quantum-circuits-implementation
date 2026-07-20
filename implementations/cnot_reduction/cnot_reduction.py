@@ -46,9 +46,7 @@ def pivot_fix(piv_idx, divergence, a1, n):
     return quantum_circuit
 
 
-def cnot_reduction(a, b):
-
-    n = int(log2(a)) + 1
+def cnot_reduction(a, b, n):
 
     if a == b: return QuantumCircuit(n)
 
