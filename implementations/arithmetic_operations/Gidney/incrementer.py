@@ -1,6 +1,9 @@
 from qiskit import *
 
 def sub_carry_gate():
+    """
+    subroutine for the incrementer gate.
+    """
     quantum_circuit1 = QuantumCircuit(3)
     quantum_circuit1.cx(0,1)
     quantum_circuit1.cx(2,0)
@@ -14,6 +17,11 @@ def sub_carry_gate():
     return (quantum_circuit1, quantum_circuit2)
 
 def incrementer(n:int):
+    """
+    incrementer gate, increments an n-bit register by 1, i.e. produces |v> -> |v+1>
+    the circuit utilizes n borrowed dirty qubits.
+    see more at: https://algassert.com/circuits/2015/06/12/Constructing-Large-Increment-Gates.html
+    """
     reg_v = QuantumRegister(n, name="v")
     reg_g = QuantumRegister(n, name="g")
     quantum_circuit = QuantumCircuit(reg_g, reg_v)
