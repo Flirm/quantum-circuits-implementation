@@ -1,5 +1,5 @@
 from qiskit import *
-from arithmetic_operations.drapper.drapper_adder import draper_adder
+from implementations.arithmetic_operations.drapper.drapper_adder import draper_adder
 
 
 def prepare_x_state(num_pad_qubits: int) -> QuantumCircuit:

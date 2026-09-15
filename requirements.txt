@@ -1,0 +1,26 @@
+# Dependencies for the circuit implementations and the test suite.
+#
+#   python -m pip install -r requirements.txt
+#
+# Lower bounds are the versions the test suite was validated against
+# (Python 3.10.5). The code uses the Qiskit 1.x/2.x API and is not
+# compatible with Qiskit 0.x.
+
+# --- core: needed to build and simulate every circuit ---
+qiskit>=2.1.1,<3
+qiskit-aer>=0.17.1
+numpy>=2.2.6
+sympy>=1.14.0          # prime_fetcher, synthesis/algociclos_Novo
+
+# --- notebooks: circuit drawing and running on IBM hardware ---
+matplotlib>=3.10.5     # .draw("mpl")
+ipykernel>=6.30.0
+qiskit-ibm-runtime>=0.40.1
+# pylatexenc                 # optional: nicer gate labels in the mpl drawer.
+                             # Not installed in the validated environment, so left
+                             # unpinned; add it if .draw("mpl") warns about labels.
+
+# The test suite uses unittest from the standard library, so no test
+# dependency is needed:
+#
+#   python -m unittest discover -s tests -t . -v

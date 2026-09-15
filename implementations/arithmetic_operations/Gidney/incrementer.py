@@ -4,17 +4,19 @@ def sub_carry_gate():
     """
     subroutine for the incrementer gate.
     """
-    quantum_circuit1 = QuantumCircuit(3)
+    quantum_circuit1 = QuantumCircuit(3, name="carry1")
     quantum_circuit1.cx(0,1)
     quantum_circuit1.cx(2,0)
     quantum_circuit1.ccx(0,1,2)
 
-    quantum_circuit2 = QuantumCircuit(3)
+    quantum_circuit2 = QuantumCircuit(3, name="carry2")
     quantum_circuit2.ccx(0,1,2)
     quantum_circuit2.cx(2,0)
     quantum_circuit2.cx(2,1)
 
-    return (quantum_circuit1, quantum_circuit2)
+    #returned as gates so that callers can still .control()/.inverse() the circuits
+    #that embed them; appending a bare QuantumCircuit yields a non-unitary Instruction
+    return (quantum_circuit1.to_gate(), quantum_circuit2.to_gate())
 
 def incrementer(n:int):
     """
@@ -24,7 +26,7 @@ def incrementer(n:int):
     """
     reg_v = QuantumRegister(n, name="v")
     reg_g = QuantumRegister(n, name="g")
-    quantum_circuit = QuantumCircuit(reg_g, reg_v)
+    quantum_circuit = QuantumCircuit(reg_g, reg_v, name="incrementer")
 
     for i in range(n): 
         quantum_circuit.cx(reg_g[0], reg_v[i])

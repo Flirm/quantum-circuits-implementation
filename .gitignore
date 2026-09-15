@@ -1,5 +1,11 @@
-/__pycache__
-/implementations/__pycache__
-/implementations/utils/__pycache__
-/implementations/VBE/__pycache__
+# The previous per-directory entries missed most packages (and pointed at
+# /implementations/VBE, which does not exist); a glob covers every package.
+__pycache__/
+*.py[cod]
+
 /.vscode
+.ipynb_checkpoints/
+
+# Backup of the notebooks taken before the duplicated definitions were
+# replaced by imports; delete once you are happy with the result.
+/notebooks_original_backup.zip

@@ -1,8 +1,8 @@
 from qiskit import *
-from prime_fetcher import find_P_with_robust_search
 from math import log2, lcm
-from arithmetic_operations.drapper.drapper_adder import adder_mod
-from windowed_arithmetic.win_mult_mod import win_mult_mod
+from implementations.aprox_residue_arithmetic.prime_fetcher import find_P_with_robust_search
+from implementations.arithmetic_operations.drapper.drapper_adder import adder_mod
+from implementations.windowed_arithmetic.win_mult_mod import win_mult_mod
 
 # ----------- pre-computed values ----------- #
 
