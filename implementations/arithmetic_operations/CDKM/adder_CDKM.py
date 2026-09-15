@@ -95,17 +95,74 @@ def adder_CDKM(num_qubits: int, modulo_2n: bool=False) -> QuantumCircuit:
     else:
         quantum_circuit = QuantumCircuit(c,a,b, name="Adder-CDKM-MOD2^n")
     
-    quantum_circuit.append(qc_MAJ(), c[0:1] + b[0:1] + a[0:1])
+    #appended as gates so that callers can .control() circuits built on top of this one
+    maj = qc_MAJ().to_gate()
+    uma = qc_UMA().to_gate()
+
+    quantum_circuit.append(maj, c[0:1] + b[0:1] + a[0:1])
 
     for i in range(1, num_qubits):
-        quantum_circuit.append(qc_MAJ(), a[i-1:i] + b[i:i+1] + a[i:i+1])
+        quantum_circuit.append(maj, a[i-1:i] + b[i:i+1] + a[i:i+1])
 
     if not modulo_2n: quantum_circuit.cx(a[-1], z[0])
-        
+
     for i in range(num_qubits-1, 0, -1):
-        quantum_circuit.append(qc_UMA(), a[i-1:i] + b[i:i+1] + a[i:i+1])
-        
-    quantum_circuit.append(qc_UMA(), c[0:1] + b[0:1] + a[0:1])
+        quantum_circuit.append(uma, a[i-1:i] + b[i:i+1] + a[i:i+1])
+
+    quantum_circuit.append(uma, c[0:1] + b[0:1] + a[0:1])
+    return quantum_circuit
+
+
+def comparator_CDKM(num_qubits: int) -> QuantumCircuit:
+    """Compares two n-qubit registers, flagging `b > a` on the `s` qubit.
+
+    Reuses the MAJ chain of :func:`adder_CDKM` on the complement of `a`: the carry-out
+    of `~a + b` is set exactly when `b > a`. Both operands are restored by running the
+    MAJ chain backwards (no UMA), so this is a pure comparison with no side effect
+    besides the flag.
+
+    The circuit has the following effect, given `anc` at `|0>`:
+
+    |anc, a, b, s> -> |anc, a, b, s ⊕ [b > a]>
+
+    Register order:
+        `anc` (1) | `a` (n) | `b` (n) | `s` (1)
+
+    Args:
+        num_qubits (int): number of qubits of each operand.
+
+    Returns:
+        quantum_circuit (QuantumCircuit): the circuit implementing the operation.
+
+    Reference:
+    -
+        A new quantum ripple-carry addition circuit.
+        Steven A. Cuccaro, Thomas G. Draper, Samuel A. Kutin, David Petrie Moulton
+    """
+    reg_anc = QuantumRegister(1, name="anc")
+    reg_a = QuantumRegister(num_qubits, name="a")
+    reg_b = QuantumRegister(num_qubits, name="b")
+    reg_s = QuantumRegister(1, name="s")
+    quantum_circuit = QuantumCircuit(reg_anc, reg_a, reg_b, reg_s, name="comparator_CDKM")
+
+    maj = qc_MAJ().to_gate()
+
+    quantum_circuit.compose(complement(num_qubits), reg_a[:], inplace=True)
+
+    quantum_circuit.append(maj, [reg_anc[0], reg_b[0], reg_a[0]])
+
+    for i in range(1, num_qubits):
+        quantum_circuit.append(maj, [reg_a[i-1], reg_b[i], reg_a[i]])
+
+    quantum_circuit.cx(reg_a[num_qubits-1], reg_s[0])
+
+    for i in range(num_qubits-1, 0, -1):
+        quantum_circuit.append(maj.inverse(), [reg_a[i-1], reg_b[i], reg_a[i]])
+
+    quantum_circuit.append(maj.inverse(), [reg_anc[0], reg_b[0], reg_a[0]])
+
+    quantum_circuit.compose(complement(num_qubits), reg_a[:], inplace=True)
+
     return quantum_circuit
 
 

@@ -222,6 +222,23 @@ def swapper(num_qubits: int) -> qiskit.QuantumCircuit:
         quantum_citcuit.swap(x[i], y[i])
     return quantum_citcuit
 
+def complement(num_qubits: int) -> qiskit.QuantumCircuit:
+    """Applies the bitwise complement to an n-qubit register.
+
+    Defines the operation |a> -> |~a>, where `~a = 2^n - 1 - a`.
+
+    Args:
+        num_qubits (int): number of qubits in the register.
+
+    Returns:
+        quantum_circuit(QuantumCircuit): A quantum circuit defining the operation.
+    """
+    reg_a = qiskit.QuantumRegister(num_qubits, name="a")
+    quantum_circuit = qiskit.QuantumCircuit(reg_a, name="complement")
+    quantum_circuit.x(reg_a)
+    return quantum_circuit
+
+
 def mod_inverse(base, exponent, mod):
     """Compute the modular inverse of base^(2^exponent) mod mod"""
     
