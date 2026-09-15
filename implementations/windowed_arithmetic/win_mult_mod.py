@@ -1,5 +1,5 @@
 from qiskit import *
-from win_add_mod import win_add_mod
+from implementations.windowed_arithmetic.win_add_mod import win_add_mod
 
 """
 pseudo code:
